@@ -310,6 +310,12 @@ return [
             'topnav_right' => true,
         ],
 
+        [
+    'text' => 'Approvals',
+    'route' => 'approvals.index',
+    'icon' => 'fas fa-fw fa-user-check',
+],
+
         // Sidebar items:
         [
             'type' => 'sidebar-menu-search',
@@ -329,7 +335,13 @@ return [
             'text' => 'Audit Log',
             'route' => 'audit.index',
             'icon' => 'fas fa-fw fa-history',
-        ],       
+        ],  
+        
+        [
+    'text' => 'Users',
+    'route' => 'users.index',
+    'icon' => 'fas fa-fw fa-users',
+],
         [
             'text' => 'blog',
             'url' => 'admin/blog',

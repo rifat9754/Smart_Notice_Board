@@ -34,6 +34,8 @@
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .btn-primary { background: #3b82f6; color: #fff; }
         .btn-board { background: #fff; color: #1e3a8a; }
+        .btn-register { background: transparent; color: #fff; border: 2px solid #fff; }
+.btn-register:hover { background: #fff; color: #1e3a8a; }
         .features {
             margin-top: 56px;
             display: flex;
@@ -60,8 +62,9 @@
     <h1>KUET CSE Notice Board</h1>
     <p class="tagline">Department of Computer Science &amp; Engineering</p>
 
-    <div class="buttons">
+<div class="buttons">
         <a href="/login" class="btn btn-primary">Admin / Teacher Login</a>
+        <a href="/register" class="btn btn-register">Register</a>
         <a href="/board/1" class="btn btn-board">View Display Board</a>
     </div>
 
