@@ -1,17 +1,22 @@
-FROM richarvey/nginx-php-fpm:latest
+FROM php:8.3-fpm
 
+RUN apt-get update && apt-get install -y \
+    git unzip zip curl \
+    libpq-dev libzip-dev libonig-dev libxml2-dev \
+    nginx \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip bcmath
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
 COPY . .
 
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+RUN composer install --no-dev --optimize-autoloader
 
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+RUN chown -R www-data:www-data /var/www/html
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 
-CMD ["/start.sh"]
+EXPOSE 80
+
+CMD php artisan migrate --force --seed && php artisan storage:link || true; php-fpm -D && nginx -g "daemon off;"
