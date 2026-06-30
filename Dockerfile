@@ -19,4 +19,5 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-CMD php artisan migrate --force --seed && php artisan storage:link || true; php-fpm -D && nginx -g "daemon off;"
+RUN chmod +x start.sh
+CMD ["./start.sh"]
