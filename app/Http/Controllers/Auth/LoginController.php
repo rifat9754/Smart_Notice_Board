@@ -33,4 +33,9 @@ class LoginController extends Controller
     {
         return auth()->user()->role === 'student' ? '/feed' : '/home';
     }
+
+    protected function loggedOut(\Illuminate\Http\Request $request)
+    {
+        return redirect('/');
+    }
 }

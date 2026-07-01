@@ -32,10 +32,10 @@
             transition: transform 0.15s, box-shadow 0.15s;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .btn-primary { background: #3b82f6; color: #fff; }
+        .btn-primary { background: #fff; color: #1e3a8a;  }
         .btn-board { background: #fff; color: #1e3a8a; }
-        .btn-register { background: transparent; color: #fff; border: 2px solid #fff; }
-.btn-register:hover { background: #fff; color: #1e3a8a; }
+        .btn-register { background: #fff; color: #1e3a8a; border: 2px solid #fff; }
+       
         .features {
             margin-top: 56px;
             display: flex;
@@ -63,7 +63,7 @@
     <p class="tagline">Department of Computer Science &amp; Engineering</p>
 
 <div class="buttons">
-        <a href="/login" class="btn btn-primary">Admin / Teacher Login</a>
+        <a href="/login" class="btn btn-primary">Login</a>
         <a href="/register" class="btn btn-register">Register</a>
         <a href="/board/1" class="btn btn-board">View Display Board</a>
     </div>
@@ -86,6 +86,6 @@
         </div>
     </div>
 
-    <footer>Smart Department Digital Notice Board &middot; 2026</footer>
+    <footer>KUET CSE Digital Notice Board &middot; 2026</footer>
 </body>
 </html>
