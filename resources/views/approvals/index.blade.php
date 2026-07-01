@@ -1,4 +1,4 @@
-```blade
+
 @extends('adminlte::page')
 
 @section('title', 'Approvals')
@@ -266,4 +266,4 @@
     </div>
 
 @stop
-```
+
