@@ -73,6 +73,29 @@ class DisplayController extends Controller
         ]);
     }
 
+    public function classUpdates()
+{
+    $today = now()->toDateString();
+
+    $notices = Notice::where('status', 'published')
+        ->whereHas('author', fn($q) => $q->where('role', 'cr'))  
+        ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
+        ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
+        ->latest()
+        ->take(5)
+        ->get()
+        ->map(fn($n) => [
+            'id'       => $n->id,
+            'title'    => $n->title,
+            'body'     => $n->body,
+            'priority' => $n->priority,
+            'year'     => $n->year,       
+            'section'  => $n->section, 
+        ]);
+
+    return response()->json(['updates' => $notices]);
+}
+
     private function format($n)
     {
         return [

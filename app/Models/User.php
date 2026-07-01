@@ -21,6 +21,11 @@ class User extends Authenticatable
     
 protected $fillable = ['name', 'email', 'password', 'role', 'department', 'status'];
 
+public function notifiedNotices()
+{
+    return $this->hasMany(\App\Models\Notice::class, 'notified_teacher_id');
+}
+
     /**
      * Get the attributes that should be cast.
      *

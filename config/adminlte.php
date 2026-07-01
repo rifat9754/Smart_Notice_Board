@@ -316,7 +316,22 @@ return [
     'icon' => 'fas fa-fw fa-user-check',
 ],
 
+[
+    'text' => 'My Notices',
+    'route' => 'cr.index',
+    'icon' => 'fas fa-fw fa-bullhorn',
+    'can' => 'is-cr',
+],
+
         // Sidebar items:
+
+        [
+    'text' => 'Notices for Me',
+    'route' => 'teacher.notifications',
+    'icon' => 'fas fa-fw fa-bell',
+    //'label' => \App\Models\Notice::where('notified_teacher_id', auth()->id())->where('notified_seen', false)->count() ?: null,
+    'label_color' => 'danger',
+],
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',

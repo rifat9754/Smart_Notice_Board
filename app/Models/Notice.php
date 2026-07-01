@@ -21,6 +21,10 @@ class Notice extends Model
     'ai_summary',
     'author_id',
     'board_id',
+    'notified_teacher_id',
+    'notified_seen',
+    'year', 
+    'section',  
 ];
 public function author()
 {
@@ -30,6 +34,7 @@ protected $casts = [
     'show_from'    => 'date',
     'show_to'      => 'date',
     'is_emergency' => 'boolean',
+    'notified_seen' => 'boolean',
 ];
 
 public function views()
@@ -41,4 +46,10 @@ public function board()
 {
     return $this->belongsTo(\App\Models\Board::class);
 }
+
+public function notifiedTeacher()
+{
+    return $this->belongsTo(\App\Models\User::class, 'notified_teacher_id');
+}
+
 }

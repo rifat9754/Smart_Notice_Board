@@ -29,10 +29,13 @@ class LoginController extends Controller
     }
 
 
-    protected function redirectTo()
-    {
-        return auth()->user()->role === 'student' ? '/feed' : '/home';
-    }
+protected function redirectTo()
+{
+    $role = auth()->user()->role;
+    if ($role === 'student') return '/feed';
+    if ($role === 'cr') return '/cr';
+    return '/home';
+}
 
     protected function loggedOut(\Illuminate\Http\Request $request)
     {

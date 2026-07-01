@@ -47,6 +47,20 @@ class ApprovalController extends Controller
         return back()->with('success', "{$user->name} re-activated.");
     }
 
+    public function makeCr(User $user)
+{
+    $user->update(['role' => 'cr']);
+    $this->log('made CR', $user);
+    return back()->with('success', "{$user->name} is now a CR.");
+}
+
+public function removeCr(User $user)
+{
+    $user->update(['role' => 'student']);
+    $this->log('removed CR', $user);
+    return back()->with('success', "{$user->name} is now a student again.");
+}
+
     private function log($action, $user)
     {
         AuditLog::create([
