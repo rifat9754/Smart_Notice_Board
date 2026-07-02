@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/my-notifications/seen', [\App\Http\Controllers\Api\NoticeApiController::class, 'markNotificationsSeen']);
     Route::post('/cr/notice', [\App\Http\Controllers\Api\NoticeApiController::class, 'crStore']);
     Route::get('/teachers', [\App\Http\Controllers\Api\NoticeApiController::class, 'teachers']);
+    Route::post('/notices/{notice}/reply', [\App\Http\Controllers\Api\NoticeApiController::class, 'replyToNotice']);
 });

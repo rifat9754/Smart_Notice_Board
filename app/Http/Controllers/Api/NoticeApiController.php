@@ -71,6 +71,7 @@ class NoticeApiController extends Controller
             'from'      => $n->author->name ?? 'Unknown',
             'seen'      => (bool) $n->notified_seen,
             'created'   => $n->created_at->diffForHumans(),
+            'reply'     => $n->teacher_reply,
         ]);
 
     $unseen = Notice::where('notified_teacher_id', $user->id)
@@ -116,5 +117,16 @@ public function crStore(Request $request)
         'notified_teacher_id'=>$data['notified_teacher_id'] ?? null, 'notified_seen'=>false,
     ]);
     return response()->json(['ok'=>true, 'id'=>$notice->id]);
+}
+
+public function replyToNotice(Request $request, Notice $notice)
+{
+    $user = $request->user();
+    if ($notice->notified_teacher_id !== $user->id) {
+        return response()->json(['error' => 'Not allowed'], 403);
+    }
+    $data = $request->validate(['reply' => 'required|string|max:1000']);
+    $notice->update(['teacher_reply' => $data['reply'], 'replied_at' => now()]);
+    return response()->json(['ok' => true]);
 }
 }

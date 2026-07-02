@@ -32,6 +32,7 @@
                         <th>Notified Teacher</th>
                         <th>Seen?</th>
                         <th>Action</th>
+                        <th>Teacher Reply</th>
                     </tr>
                 </thead>
 
@@ -74,6 +75,15 @@
                                 —
                             @endif
                         </td>
+
+                        <td>
+    @if($n->teacher_reply)
+        <span class="text-success"><i class="fas fa-reply"></i> {{ $n->teacher_reply }}</span>
+        <br><small class="text-muted">{{ $n->replied_at?->diffForHumans() }}</small>
+    @else
+        <span class="text-muted">No reply yet</span>
+    @endif
+</td>
 
                         <td>
                             <form action="{{ route('cr.destroy', $n) }}"

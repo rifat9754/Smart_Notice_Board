@@ -22,6 +22,7 @@ Route::get('/board/{id}', function ($id) {
 Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(function () {
     Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/my-notifications', [\App\Http\Controllers\TeacherNotificationController::class, 'index'])->name('teacher.notifications');
+    Route::post('/my-notifications/{notice}/reply', [\App\Http\Controllers\TeacherNotificationController::class, 'reply'])->name('teacher.reply');
 });
 
 Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function () {

@@ -22,4 +22,18 @@ class TeacherNotificationController extends Controller
 
         return view('teacher.notifications', compact('notices'));
     }
+
+    public function reply(Request $request, Notice $notice)
+{
+   
+    if ($notice->notified_teacher_id !== Auth::id()) {
+        abort(403);
+    }
+    $data = $request->validate(['teacher_reply' => 'required|string|max:1000']);
+    $notice->update([
+        'teacher_reply' => $data['teacher_reply'],
+        'replied_at'    => now(),
+    ]);
+    return back()->with('success', 'Reply sent to CR.');
+}
 }
