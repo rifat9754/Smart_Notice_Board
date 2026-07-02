@@ -21,4 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cr/notice', [\App\Http\Controllers\Api\NoticeApiController::class, 'crStore']);
     Route::get('/teachers', [\App\Http\Controllers\Api\NoticeApiController::class, 'teachers']);
     Route::post('/notices/{notice}/reply', [\App\Http\Controllers\Api\NoticeApiController::class, 'replyToNotice']);
+
+    Route::get('/my-cr-notices', [\App\Http\Controllers\Api\NoticeApiController::class, 'myCrNotices']);
+Route::delete('/my-cr-notices/{notice}', [\App\Http\Controllers\Api\NoticeApiController::class, 'deleteCrNotice']);
 });

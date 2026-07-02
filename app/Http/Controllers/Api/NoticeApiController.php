@@ -80,6 +80,42 @@ class NoticeApiController extends Controller
     return response()->json(['notices' => $notices, 'unseen' => $unseen]);
 }
 
+public function myCrNotices(Request $request)
+{
+    $user = $request->user();
+    if ($user->role !== 'cr') {
+        return response()->json([]);
+    }
+
+    return Notice::where('author_id', $user->id)
+        ->with('notifiedTeacher')
+        ->latest()
+        ->get()
+        ->map(fn($n) => [
+            'id'          => $n->id,
+            'title'       => $n->title,
+            'body'        => $n->body,
+            'priority'    => $n->priority,
+            'year'        => $n->year,
+            'section'     => $n->section,
+            'teacher'     => $n->notifiedTeacher->name ?? null,
+            'reply'       => $n->teacher_reply,
+            'replied_at'  => $n->replied_at?->diffForHumans(),
+        ]);
+}
+
+public function deleteCrNotice(Request $request, Notice $notice)
+{
+    $user = $request->user();
+    
+    if ($notice->author_id !== $user->id) {
+        return response()->json(['error' => 'Not allowed'], 403);
+    }
+    $notice->delete();
+    return response()->json(['ok' => true]);
+}
+
+
 
 public function markNotificationsSeen(Request $request)
 {
