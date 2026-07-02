@@ -322,6 +322,12 @@ return [
     'icon' => 'fas fa-fw fa-bullhorn',
     'can' => 'is-cr',
 ],
+[
+    'text' => 'Notices',
+    'route' => 'student.feed',
+    'icon' => 'fas fa-fw fa-bullhorn',
+    'can' => 'is-student',
+],
 
         // Sidebar items:
 

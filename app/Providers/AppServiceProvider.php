@@ -27,6 +27,7 @@ public function boot(): void
     if (config('app.env') === 'production') {
         URL::forceScheme('https');
     }
+    Gate::define('is-student', fn($user) => $user->role === 'student');
 
     Gate::define('is-cr', fn($user) => $user->role === 'cr');
 
