@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Notice;
 use App\Models\NoticeView;
+use Illuminate\Http\Request;
 
 class NoticeApiController extends Controller
 {
