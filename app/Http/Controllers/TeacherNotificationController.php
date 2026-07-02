@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notice;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class TeacherNotificationController extends Controller
 {

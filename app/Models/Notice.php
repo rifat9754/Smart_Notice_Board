@@ -24,7 +24,9 @@ class Notice extends Model
     'notified_teacher_id',
     'notified_seen',
     'year', 
-    'section',  
+    'section', 
+    'teacher_reply',
+    'replied_at', 
 ];
 public function author()
 {
@@ -35,6 +37,8 @@ protected $casts = [
     'show_to'      => 'date',
     'is_emergency' => 'boolean',
     'notified_seen' => 'boolean',
+
+    'replied_at' => 'datetime',
 ];
 
 public function views()
