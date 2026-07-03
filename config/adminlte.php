@@ -343,13 +343,13 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
-        [
-            'text' => 'Notices',
-            'route' => 'notices.index',
-            'icon' => 'fas fa-fw fa-bullhorn',
-            'can' => 'is-teacher-or-admin',
-        ],
-        [
+[
+    'text' => 'Notices',
+    'route' => 'notices.index',
+    'icon' => 'fas fa-fw fa-bullhorn',
+    'can' => 'is-teacher-or-admin',
+],
+[
     'text' => 'Notices',
     'route' => 'student.feed',
     'icon' => 'fas fa-fw fa-bullhorn',

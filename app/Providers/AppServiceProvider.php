@@ -27,10 +27,11 @@ public function boot(): void
     if (config('app.env') === 'production') {
         URL::forceScheme('https');
     }
-    Gate::define('is-student', fn($user) => $user->role === 'student');
-
-    Gate::define('is-cr', fn($user) => $user->role === 'cr');
-    Gate::define('is-student-or-cr', fn($user) => in_array($user->role, ['student', 'cr']));
+Gate::define('is-cr', fn($user) => $user->role === 'cr');
+Gate::define('is-teacher-or-admin', fn($user) => in_array($user->role, ['teacher', 'super_admin']));
+Gate::define('is-admin', fn($user) => $user->role === 'super_admin');
+Gate::define('is-student', fn($user) => $user->role === 'student');
+Gate::define('is-student-or-cr', fn($user) => in_array($user->role, ['student', 'cr']));
 
     View::composer('*', function ($view) {
     $count = 0;
