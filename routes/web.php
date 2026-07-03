@@ -56,3 +56,13 @@ Route::middleware(['auth', 'preventback', 'role:cr'])->group(function () {
     Route::delete('/cr/{notice}', [\App\Http\Controllers\CrController::class, 'destroy'])->name('cr.destroy');
 });
 
+Route::middleware(['auth', 'preventback'])->group(function () {
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::middleware(['auth', 'preventback', 'role:student,cr'])->group(function () {
+    Route::get('/feed', [\App\Http\Controllers\StudentController::class, 'feed'])->name('student.feed');
+    Route::get('/feed/{notice}', [\App\Http\Controllers\StudentController::class, 'show'])->name('student.show');
+});

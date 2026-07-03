@@ -332,6 +332,7 @@ return [
         // Sidebar items:
 
         [
+
     'text' => 'Notices for Me',
     'route' => 'teacher.notifications',
     'icon' => 'fas fa-fw fa-bell',
@@ -346,7 +347,14 @@ return [
             'text' => 'Notices',
             'route' => 'notices.index',
             'icon' => 'fas fa-fw fa-bullhorn',
+            'can' => 'is-teacher-or-admin',
         ],
+        [
+    'text' => 'Notices',
+    'route' => 'student.feed',
+    'icon' => 'fas fa-fw fa-bullhorn',
+    'can' => 'is-student-or-cr',
+],
         [
             'text' => 'Analytics',
             'route' => 'analytics.index',
@@ -376,54 +384,12 @@ return [
             'label_color' => 'success',
         ],
         ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
+[
+    'text' => 'Profile',
+    'route' => 'profile.index',   
+    'icon' => 'fas fa-fw fa-user',
+],
+
         ['header' => 'labels'],
         [
             'text' => 'important',

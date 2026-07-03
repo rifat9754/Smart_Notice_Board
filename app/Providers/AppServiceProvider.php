@@ -30,6 +30,7 @@ public function boot(): void
     Gate::define('is-student', fn($user) => $user->role === 'student');
 
     Gate::define('is-cr', fn($user) => $user->role === 'cr');
+    Gate::define('is-student-or-cr', fn($user) => in_array($user->role, ['student', 'cr']));
 
     View::composer('*', function ($view) {
     $count = 0;
