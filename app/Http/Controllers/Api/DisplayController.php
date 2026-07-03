@@ -18,9 +18,9 @@ class DisplayController extends Controller
         $notices = Notice::where('status', 'published')
             ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
             ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
-           /* ->when($boardId, function ($q) use ($boardId) {
+            ->when($boardId, function ($q) use ($boardId) {
                 $q->where(fn($qq) => $qq->whereNull('board_id')->orWhere('board_id', $boardId));
-            }) */
+            }) 
             ->withCount('views')
             ->get();
 
