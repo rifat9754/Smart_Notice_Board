@@ -30,6 +30,11 @@
 </div>
 @endif
 
+@if(session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+@endif
+
+
 <form method="POST" action="{{ route('login') }}">
 @csrf
 
@@ -81,7 +86,7 @@ required>
 
 </div>
 
-<div class="row align-items-center mb-4">
+<div class="row align-items-center mb-3">
 
 <div class="col-6">
 
@@ -113,6 +118,14 @@ Sign In
 </div>
 
 </div>
+
+@if (Route::has('password.request'))
+<p class="text-center mb-4">
+    <a class="forgot-link" href="{{ route('password.request') }}">
+        Forgot your password?
+    </a>
+</p>
+@endif
 
 </form>
 
@@ -387,6 +400,26 @@ box-shadow:
 .login-btn:active{
 
 transform:scale(.98);
+
+}
+
+/* Forgot password link */
+
+.forgot-link{
+
+font-size:13px;
+
+font-weight:600;
+
+color:#2563eb;
+
+}
+
+.forgot-link:hover{
+
+color:#1d4ed8;
+
+text-decoration:underline!important;
 
 }
 

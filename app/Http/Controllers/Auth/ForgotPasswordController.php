@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\Request;
 
 class ForgotPasswordController extends Controller
 {
@@ -17,6 +18,13 @@ class ForgotPasswordController extends Controller
     | your application to your users. Feel free to explore this trait.
     |
     */
+    
 
     use SendsPasswordResetEmails;
+
+        protected function sendResetLinkResponse(Request $request, $response)
+    {
+        return redirect()->route('login')
+            ->with('status', 'We have emailed your password reset link! Please check your email.');
+    }
 }
