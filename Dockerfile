@@ -19,5 +19,6 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-RUN chmod +x start.sh
-CMD ["./start.sh"]
+RUN chmod +x /var/www/html/start.sh
+
+CMD ["/var/www/html/start.sh"]
