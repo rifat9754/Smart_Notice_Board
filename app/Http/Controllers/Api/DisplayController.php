@@ -71,7 +71,17 @@ class DisplayController extends Controller
             'mode'     => 'normal',
             'playlist' => $playlist,
         ]);
+
+
+    $notices = Notice::where('status', 'published')
+    ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   // ← CR-এর notice বাদ
+    ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
+    ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
+    ->withCount('views')
+    ->get();
     }
+
+    
 
     public function classUpdates()
 {

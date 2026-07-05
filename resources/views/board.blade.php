@@ -395,27 +395,50 @@
         setInterval(rotateEvent, 8000);
 
         // Class Updates
-        async function loadClassUpdates() {
-            try {
-                const res = await fetch(`${API_URL}/class-updates`);
-                const data = await res.json();
-                const box = document.getElementById('classUpdates');
-                const list = document.getElementById('cuList');
-                if (!data.updates || data.updates.length === 0) { box.style.display = 'none'; return; }
-                box.style.display = 'block';
-                list.innerHTML = data.updates.map(u => `
-                    <div class="cu-item">
-                        ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
-                        <span class="cu-title">${u.title}</span>
-                        <span class="cu-body">${u.body.length > 55 ? u.body.slice(0,55) + '…' : u.body}</span>
-                    </div>
-                `).join('');
-            } catch (e) {
-                document.getElementById('classUpdates').style.display = 'none';
-            }
-        }
-        loadClassUpdates();
-        setInterval(loadClassUpdates, 10000);
+let cuAll = [];      // সব CR notice
+let cuPage = 0;      // এখন কোন জোড়া দেখাচ্ছি
+
+async function loadClassUpdates() {
+    try {
+        const res = await fetch(`${API_URL}/class-updates`);
+        const data = await res.json();
+        cuAll = data.updates || [];
+        renderClassUpdates();
+    } catch (e) {
+        document.getElementById('classUpdates').style.display = 'none';
+    }
+}
+
+function renderClassUpdates() {
+    const box = document.getElementById('classUpdates');
+    const list = document.getElementById('cuList');
+    if (cuAll.length === 0) { box.style.display = 'none'; return; }
+    box.style.display = 'block';
+
+    const perPage = 2;                                   // ২টা করে
+    const totalPages = Math.ceil(cuAll.length / perPage);
+    const start = (cuPage % totalPages) * perPage;
+    const pageItems = cuAll.slice(start, start + perPage);
+
+    list.innerHTML = pageItems.map(u => `
+        <div class="cu-item">
+            ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
+            <span class="cu-title">${u.title}</span>
+            <span class="cu-body">${u.body.length > 55 ? u.body.slice(0,55) + '…' : u.body}</span>
+        </div>
+    `).join('');
+}
+
+function rotateClassUpdates() {
+    if (cuAll.length > 2) {          
+        cuPage++;
+        renderClassUpdates();
+    }
+}
+
+loadClassUpdates();
+setInterval(loadClassUpdates, 8000);  
+setInterval(rotateClassUpdates, 4000);  
     </script>
 </body>
 </html>
