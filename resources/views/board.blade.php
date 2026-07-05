@@ -300,7 +300,7 @@
                 </div>
                 <div class="qr-text">
                     <b>Scan for details</b>
-                    <p>Open this notice on your phone</p>
+                   
                 </div>
             </div>
         </div>
