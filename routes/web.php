@@ -66,3 +66,9 @@ Route::middleware(['auth', 'preventback', 'role:student,cr'])->group(function ()
     Route::get('/feed', [\App\Http\Controllers\StudentController::class, 'feed'])->name('student.feed');
     Route::get('/feed/{notice}', [\App\Http\Controllers\StudentController::class, 'show'])->name('student.show');
 });
+
+Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(function () {
+    Route::get('/events', [\App\Http\Controllers\EventController::class, 'index'])->name('events.index');
+    Route::post('/events', [\App\Http\Controllers\EventController::class, 'store'])->name('events.store');
+    Route::delete('/events/{event}', [\App\Http\Controllers\EventController::class, 'destroy'])->name('events.destroy');
+});

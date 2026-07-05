@@ -109,4 +109,13 @@ class DisplayController extends Controller
             'is_emergency' => (bool) $n->is_emergency,
         ];
     }
+
+    public function events()
+{
+    $events = \App\Models\Event::latest()->take(10)->get()->map(fn($e) => [
+        'title' => $e->title,
+        'image' => asset('storage/'.$e->image_path),
+    ]);
+    return response()->json(['events' => $events]);
+}
 }

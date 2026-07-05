@@ -326,6 +326,14 @@ return [
     'can' => 'is-student',
 ],
 
+
+[
+    'text' => 'Events',
+    'route' => 'events.index',
+    'icon' => 'fas fa-fw fa-images',
+    'can' => 'is-teacher-or-admin',
+],
+
         // Sidebar items:
 
         [
