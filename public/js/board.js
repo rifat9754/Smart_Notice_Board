@@ -39,7 +39,7 @@ function setStatus(online) {
     el.textContent = online ? '● online' : '● offline — showing last update';
 }
 
-// ---- একটা notice স্ক্রিনে দেখানো ----
+
 function showNotice() {
     const box = document.getElementById('noticeBox');
     if (!playlist.length) {
@@ -67,10 +67,10 @@ function showNotice() {
     // QR — এই notice-এর detail link
     const qrBox = document.getElementById('qrcode');
     qrBox.innerHTML = '';
-    new QRCode(qrBox, {
-        text: `${window.location.origin}/board/${BOARD_ID}#notice-${n.id}`,
-        width: 150, height: 150
-    });
+new QRCode(document.getElementById("qrcode"), {
+    text: window.location.origin + "/public-notices",
+    width: 90, height: 90,
+});
 
     // view log (analytics-এর জন্য)
     fetch(`${API_URL}/notices/${n.id}/view`, { method: 'POST' }).catch(() => {});

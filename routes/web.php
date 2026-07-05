@@ -19,6 +19,9 @@ Route::get('/board/{id}', function ($id) {
     return view('board', ['boardId' => $id]);
 });
 
+Route::get('/public-notices', [\App\Http\Controllers\PublicNoticeController::class, 'index'])->name('public.notices');
+Route::get('/public-notices/{notice}', [\App\Http\Controllers\PublicNoticeController::class, 'show'])->name('public.show');
+
 Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(function () {
     Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/my-notifications', [\App\Http\Controllers\TeacherNotificationController::class, 'index'])->name('teacher.notifications');
