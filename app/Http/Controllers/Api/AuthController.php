@@ -39,6 +39,35 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request)
+{
+    $data = $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|unique:users,email',
+        'password' => 'required|string|min:6',
+        'role'     => 'required|in:student,teacher',
+    ]);
+
+    // student হলে email অবশ্যই @stud.kuet.ac.bd
+    if ($data['role'] === 'student' && !str_ends_with($data['email'], '@stud.kuet.ac.bd')) {
+        return response()->json([
+            'message' => 'Students must use a @stud.kuet.ac.bd email.'
+        ], 422);
+    }
+
+    $user = \App\Models\User::create([
+        'name'     => $data['name'],
+        'email'    => $data['email'],
+        'password' => \Hash::make($data['password']),
+        'role'     => $data['role'],
+        'status'   => 'pending',   // admin approval লাগবে
+    ]);
+
+    return response()->json([
+        'message' => 'Registration successful! Please wait for admin approval before logging in.',
+    ], 201);
+}
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

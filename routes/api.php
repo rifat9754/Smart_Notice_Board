@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DisplayController;
 
 // Public (display board has no login)
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
 Route::get('/display', [DisplayController::class, 'index']);
 Route::get('/class-updates', [\App\Http\Controllers\Api\DisplayController::class, 'classUpdates']);
 Route::post('/notices/{notice}/view', [NoticeApiController::class, 'logView']);
