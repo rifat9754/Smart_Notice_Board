@@ -315,7 +315,7 @@
 
     <!-- Class Updates -->
     <div class="class-updates" id="classUpdates" style="display:none;">
-        <h3>📋 Class Updates (from CR)</h3>
+        <h3>📋 Notices from CR</h3>
         <div id="cuList"></div>
     </div>
 
@@ -395,8 +395,8 @@
         setInterval(rotateEvent, 8000);
 
         // Class Updates
-let cuAll = [];      // সব CR notice
-let cuPage = 0;      // এখন কোন জোড়া দেখাচ্ছি
+let cuAll = [];      
+let cuPage = 0;      
 
 async function loadClassUpdates() {
     try {

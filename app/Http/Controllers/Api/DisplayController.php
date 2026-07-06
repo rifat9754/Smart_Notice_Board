@@ -14,13 +14,11 @@ class DisplayController extends Controller
         $today   = now()->toDateString();
         $now     = now();
 
-        // 1) Active notices: published, within date window, for this board or all boards
+        // 1) Active notices: published, within date window — CR notices excluded (they go to Class Updates)
         $notices = Notice::where('status', 'published')
+            ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   // ← CR বাদ, এখানে
             ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
             ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
-            ->when($boardId, function ($q) use ($boardId) {
-                $q->where(fn($qq) => $qq->whereNull('board_id')->orWhere('board_id', $boardId));
-            }) 
             ->withCount('views')
             ->get();
 
@@ -33,7 +31,7 @@ class DisplayController extends Controller
             return true;
         });
 
-        // 3) Emergency override: if any emergency notice is active, show only those
+        // 3) Emergency override
         $emergency = $notices->where('is_emergency', true)->values();
         if ($emergency->isNotEmpty()) {
             return response()->json([
@@ -71,17 +69,7 @@ class DisplayController extends Controller
             'mode'     => 'normal',
             'playlist' => $playlist,
         ]);
-
-
-    $notices = Notice::where('status', 'published')
-    ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   // ← CR-এর notice বাদ
-    ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
-    ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
-    ->withCount('views')
-    ->get();
     }
-
-    
 
     public function classUpdates()
 {
