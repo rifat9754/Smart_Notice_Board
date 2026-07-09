@@ -275,7 +275,7 @@
 </head>
 <body>
     <div class="topbar">
-        <img src="{{ asset('kuet-logo.png') }}" alt="KUET CSE" onerror="this.style.display='none'">
+        <img src="{{ asset('kuet-logo1.png') }}" alt="KUET CSE" onerror="this.style.display='none'">
         <div class="titles">
             <h1>Department of Computer Science &amp; Engineering,KUET</h1>
           <!-- <div class="sub">Department of Computer Science &amp; Engineering, KUET</div> -->
