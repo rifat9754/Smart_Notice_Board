@@ -123,22 +123,23 @@
             color: var(--muted-2);
             line-height: 1.5;
         }
-        .ai-summary {
-            margin-top: 24px;
-            padding: 16px 22px;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--blue);
-            border-radius: 14px;
-            font-size: calc(clamp(15px, 1.6vw, 20px) * var(--fit));
-            color: var(--muted-2);
-            backdrop-filter: blur(8px);
-        }
-        .ai-summary span {
-            color: var(--blue-soft); font-size: 12px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px;
-            display: block; margin-bottom: 8px;
-        }
+.ai-summary {
+    margin-top: 24px;
+    padding: 16px 22px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 14px;
+    font-size: calc(clamp(15px, 1.6vw, 20px) * var(--fit));
+    color: var(--muted-2);
+    backdrop-filter: blur(8px);
+    white-space: pre-line;   /* ← add this so \n bullets break onto separate lines */
+}
+.ai-summary span {
+    color: var(--blue-soft); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    display: block; margin-bottom: 8px;
+}
 
         /* QR — under the notice; text sits BELOW the QR, left aligned */
         .qr-box {
@@ -274,10 +275,10 @@
 </head>
 <body>
     <div class="topbar">
-        <img src="{{ asset('kuet-logo1.png') }}" alt="KUET CSE" onerror="this.style.display='none'">
+        <img src="{{ asset('kuet-logo.png') }}" alt="KUET CSE" onerror="this.style.display='none'">
         <div class="titles">
-            <h1>Department of Computer Science &amp; Engineering,KUET</h1>
-          <!-- <div class="sub">Department of Computer Science &amp; Engineering, KUET</div> -->
+            <h1>Department of Computer Science &amp; Engineering, KUET</h1>
+          <!-- <div class="sub">Department of Computer Science &amp; Engineering, KUET</div> -->>
         </div>
         <div class="clock">
             <div id="time">--:--</div>
