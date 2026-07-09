@@ -1,9 +1,9 @@
 let playlist = [];
-let lastPlaylist = [];   // offline cache: শেষবার যা পেয়েছিলাম
+let lastPlaylist = [];   // offline cache
 let currentIndex = 0;
 let isEmergency = false;
 
-// ---- ঘড়ি ----
+// clock
 function updateClock() {
     const now = new Date();
     document.getElementById('time').textContent =
@@ -14,7 +14,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// ---- backend থেকে playlist আনা (polling) ----
+// ---- backend to playlist (polling) ----
 async function fetchPlaylist() {
     try {
         const res = await fetch(`${API_URL}/display?board_id=${BOARD_ID}`);
@@ -64,7 +64,7 @@ function showNotice() {
         ${summary}
     `;
 
-    // QR — এই notice-এর detail link
+    // QR 
     const qrBox = document.getElementById('qrcode');
     qrBox.innerHTML = '';
 new QRCode(document.getElementById("qrcode"), {
@@ -72,11 +72,11 @@ new QRCode(document.getElementById("qrcode"), {
     width: 90, height: 90,
 });
 
-    // view log (analytics-এর জন্য)
+    // view log 
     fetch(`${API_URL}/notices/${n.id}/view`, { method: 'POST' }).catch(() => {});
 }
 
-// ---- ticker (জরুরি + high notice-এর শিরোনাম ঘুরবে) ----
+// ---- ticker 
 function updateTicker() {
     const items = playlist
         .filter(n => isEmergency || n.priority === 'high')
@@ -85,14 +85,14 @@ function updateTicker() {
     document.getElementById('tickerText').textContent = text;
 }
 
-// ---- প্রতি ৮ সেকেন্ডে পরের notice-এ যাওয়া ----
+// ---- per 8 second notice
 function nextNotice() {
     if (!playlist.length) return;
     currentIndex = (currentIndex + 1) % playlist.length;
     showNotice();
 }
 
-// ---- চালু ----
-fetchPlaylist();                       // প্রথমবার সাথে সাথে
-setInterval(fetchPlaylist, 8000);      // প্রতি ৮ সেকেন্ডে নতুন data
-setInterval(nextNotice, 8000);         // প্রতি ৮ সেকেন্ডে পরের notice
+// start
+fetchPlaylist();                       // first
+setInterval(fetchPlaylist, 8000);      // per 8 sec new data
+setInterval(nextNotice, 8000);         // per 8 seconds to the next notice

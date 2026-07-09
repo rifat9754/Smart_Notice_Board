@@ -277,8 +277,8 @@
     <div class="topbar">
         <img src="{{ asset('kuet-logo.png') }}" alt="KUET CSE" onerror="this.style.display='none'">
         <div class="titles">
-            <h1>Department of Computer Science &amp; Engineering, KUET</h1>
-          <!-- <div class="sub">Department of Computer Science &amp; Engineering, KUET</div> -->>
+            <h1>Department of Computer Science &amp; Engineering,KUET</h1>
+          <!-- <div class="sub">Department of Computer Science &amp; Engineering, KUET</div> -->
         </div>
         <div class="clock">
             <div id="time">--:--</div>
@@ -415,8 +415,8 @@ function renderClassUpdates() {
     const list = document.getElementById('cuList');
     if (cuAll.length === 0) { box.style.display = 'none'; return; }
     box.style.display = 'block';
-
-    const perPage = 2;                                   // ২টা করে
+//cr 2
+    const perPage = 2;                                   
     const totalPages = Math.ceil(cuAll.length / perPage);
     const start = (cuPage % totalPages) * perPage;
     const pageItems = cuAll.slice(start, start + perPage);
