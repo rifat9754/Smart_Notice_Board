@@ -75,3 +75,11 @@ Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(fu
     Route::post('/events', [\App\Http\Controllers\EventController::class, 'store'])->name('events.store');
     Route::delete('/events/{event}', [\App\Http\Controllers\EventController::class, 'destroy'])->name('events.destroy');
 });
+
+
+Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function () {
+    Route::get('/promotion', [\App\Http\Controllers\PromotionController::class, 'index'])->name('promotion.index');
+    Route::post('/promotion/promote-all', [\App\Http\Controllers\PromotionController::class, 'promoteAll'])->name('promotion.promoteAll');
+    Route::put('/promotion/student/{user}', [\App\Http\Controllers\PromotionController::class, 'updateStudent'])->name('promotion.updateStudent');
+    Route::delete('/promotion/delete-final-year', [\App\Http\Controllers\PromotionController::class, 'deleteFinalYear'])->name('promotion.deleteFinalYear');
+});

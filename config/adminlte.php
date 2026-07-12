@@ -341,7 +341,6 @@ return [
     'text' => 'Notices for Me',
     'route' => 'teacher.notifications',
     'icon' => 'fas fa-fw fa-bell',
-    //'label' => \App\Models\Notice::where('notified_teacher_id', auth()->id())->where('notified_seen', false)->count() ?: null,
     'label_color' => 'danger',
 ],
         [
@@ -393,6 +392,13 @@ return [
     'text' => 'Profile',
     'route' => 'profile.index',   
     'icon' => 'fas fa-fw fa-user',
+],
+
+[
+    'text' => 'Year Promotion',
+    'route' => 'promotion.index',
+    'icon' => 'fas fa-fw fa-user-graduate',
+    'can' => 'is-admin',
 ],
 
    /*     ['header' => 'labels'],
