@@ -135,24 +135,28 @@ public function teachers()
 public function crStore(Request $request)
 {
     $user = $request->user();
-    if ($user->role !== 'cr') return response()->json(['error'=>'Not allowed'], 403);
 
     $data = $request->validate([
-        'title' => 'required|string|max:255',
-        'body' => 'required|string',
+        'title'    => 'required|string|max:255',
+        'body'     => 'required|string',
         'priority' => 'required|in:high,medium,low',
-        'year' => 'required',
-        'section' => 'required',
         'notified_teacher_id' => 'nullable|exists:users,id',
+        // year/section আর form থেকে নিচ্ছি না
     ]);
 
-    $notice = \App\Models\Notice::create([
-        'title'=>$data['title'], 'body'=>$data['body'], 'type'=>'text',
-        'priority'=>$data['priority'], 'status'=>'published', 'is_emergency'=>false,
-        'author_id'=>$user->id, 'year'=>$data['year'], 'section'=>$data['section'],
-        'notified_teacher_id'=>$data['notified_teacher_id'] ?? null, 'notified_seen'=>false,
+    $notice = Notice::create([
+        'title'    => $data['title'],
+        'body'     => $data['body'],
+        'priority' => $data['priority'],
+        'type'     => 'text',
+        'status'   => 'published',
+        'author_id'=> $user->id,
+        'year'     => $user->year,       // ← CR-এর profile থেকে auto
+        'section'  => $user->section,    // ← CR-এর profile থেকে auto
+        'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
     ]);
-    return response()->json(['ok'=>true, 'id'=>$notice->id]);
+
+    return response()->json(['message' => 'Notice posted', 'notice' => $notice], 201);
 }
 
 public function replyToNotice(Request $request, Notice $notice)

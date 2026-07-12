@@ -19,7 +19,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
     
-protected $fillable = ['name', 'email', 'password', 'role', 'department', 'status'];
+protected $fillable = ['name', 'email', 'password', 'role', 'department', 'status','year', 'section',];
 
 public function notifiedNotices()
 {

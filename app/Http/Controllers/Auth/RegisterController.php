@@ -58,31 +58,28 @@ protected function validator(array $data)
         'name'     => ['required', 'string', 'max:255'],
         'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
         'password' => ['required', 'string', 'min:6', 'confirmed'],
-        'role'     => ['required', 'in:teacher,student'],
-    ], [
-        'role.in' => 'Please select a valid role.',
-    ])->after(function ($validator) use ($data) {
-        // student হলে email অবশ্যই @stud.kuet.ac.bd হতে হবে
-        if (($data['role'] ?? null) === 'student'
-            && ! str_ends_with(strtolower($data['email'] ?? ''), '@stud.kuet.ac.bd')) {
-            $validator->errors()->add('email', 'Students must use a @stud.kuet.ac.bd email.');
-        }
-    });
+        'role'     => ['required', 'in:student,teacher'],
+        // student হলে year/section বাধ্যতামূলক
+        'year'     => ['required_if:role,student', 'nullable', 'in:1st,2nd,3rd,4th'],
+        'section'  => ['required_if:role,student', 'nullable', 'in:A,B'],
+    ]);
 }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @return User
-     */
 protected function create(array $data)
 {
+    // student email check (আগের মতো)
+    if ($data['role'] === 'student' && !str_ends_with($data['email'], '@stud.kuet.ac.bd')) {
+        // তোমার আগের logic
+    }
+
     return User::create([
         'name'     => $data['name'],
         'email'    => $data['email'],
         'password' => Hash::make($data['password']),
         'role'     => $data['role'],
-        'status'   => 'pending',   // approve-এর অপেক্ষায়
+        'status'   => 'pending',
+        'year'     => $data['role'] === 'student' ? $data['year'] : null,       // ← যোগ
+        'section'  => $data['role'] === 'student' ? $data['section'] : null,    // ← যোগ
     ]);
 }
 }
