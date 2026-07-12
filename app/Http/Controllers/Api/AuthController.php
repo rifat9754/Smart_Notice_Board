@@ -77,4 +77,14 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out']);
     }
+
+    public function saveFcmToken(Request $request)
+{
+    $request->validate(['fcm_token' => 'required|string']);
+
+    $user = $request->user();
+    $user->update(['fcm_token' => $request->fcm_token]);
+
+    return response()->json(['message' => 'Token saved']);
+}
 }
