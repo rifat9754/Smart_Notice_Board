@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Notice;
 use App\Models\NoticeView;
 use Illuminate\Http\Request;
+use App\Services\FcmService;
 
 class NoticeApiController extends Controller
 {
@@ -156,6 +157,18 @@ public function crStore(Request $request)
         'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
     ]);
 
+        if ($notice->notified_teacher_id) {
+        $teacher = \App\Models\User::find($notice->notified_teacher_id);
+        if ($teacher && $teacher->fcm_token) {
+            app(FcmService::class)->send(
+                $teacher->fcm_token,
+                'New Class Notice',
+                "{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
+                ['notice_id' => $notice->id, 'type' => 'cr_notice']
+            );
+        }
+    }
+
     return response()->json(['message' => 'Notice posted', 'notice' => $notice], 201);
 }
 
@@ -167,6 +180,18 @@ public function replyToNotice(Request $request, Notice $notice)
     }
     $data = $request->validate(['reply' => 'required|string|max:1000']);
     $notice->update(['teacher_reply' => $data['reply'], 'replied_at' => now()]);
+
+        $cr = \App\Models\User::find($notice->author_id);
+    if ($cr && $cr->fcm_token) {
+        app(FcmService::class)->send(
+            $cr->fcm_token,
+            'Teacher Replied',
+            "{$user->name} replied to your notice: {$notice->title}",
+            ['notice_id' => $notice->id, 'type' => 'reply']
+        );
+    }
+
+    
     return response()->json(['ok' => true]);
 }
 }

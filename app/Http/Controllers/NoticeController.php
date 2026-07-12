@@ -6,10 +6,12 @@ use App\Models\Notice;
 use App\Models\Board;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
+use App\Services\FcmService;
 use Illuminate\Support\Facades\Auth;
 
 use App\Services\AiSummaryService;
 use Smalot\PdfParser\Parser;
+
 
 class NoticeController extends Controller
 {
@@ -36,14 +38,32 @@ class NoticeController extends Controller
         }
         unset($data['attachment']);
 
-       // Notice::create($data);
 
        $notice = Notice::create($data);
-               AuditLog::create(['user_id' => auth()->id(), 'action' => 'created', 'target_type' => 'Notice', 'target_id' => $notice->id]);
-if ($notice->type === 'pdf' && $notice->file_path) {
-    $this->generateSummary($notice);
-}
 
+       AuditLog::create(['user_id' => auth()->id(), 'action' => 'created', 'target_type' => 'Notice', 'target_id' => $notice->id]);
+
+       if ($notice->type === 'pdf' && $notice->file_path) {
+           $this->generateSummary($notice);
+        }
+
+
+    if ($notice->status === 'published') {
+        $tokens = \App\Models\User::whereIn('role', ['student', 'cr'])
+            ->where('status', 'active')
+            ->whereNotNull('fcm_token')
+            ->pluck('fcm_token')
+            ->toArray();
+
+        if (!empty($tokens)) {
+            app(FcmService::class)->sendToMany(
+                $tokens,
+                'New Notice: ' . $notice->title,
+                \Illuminate\Support\Str::limit(strip_tags($notice->body), 100),
+                ['notice_id' => $notice->id, 'type' => 'notice']
+            );
+        }
+    }
 
         return redirect()->route('notices.index')->with('success', 'Notice created successfully.');
     }
@@ -56,6 +76,7 @@ if ($notice->type === 'pdf' && $notice->file_path) {
 
     public function update(Request $request, Notice $notice)
     {
+        $wasPublished = $notice->status === 'published';
         $data = $this->validateNotice($request);
         $data['is_emergency'] = $request->has('is_emergency');
 
@@ -67,6 +88,24 @@ if ($notice->type === 'pdf' && $notice->file_path) {
         $notice->update($data);
 
                 AuditLog::create(['user_id' => auth()->id(), 'action' => 'updated', 'target_type' => 'Notice', 'target_id' => $notice->id]);
+
+
+    if (!$wasPublished && $notice->status === 'published') {
+        $tokens = \App\Models\User::whereIn('role', ['student', 'cr'])
+            ->where('status', 'active')
+            ->whereNotNull('fcm_token')
+            ->pluck('fcm_token')->toArray();
+
+        if (!empty($tokens)) {
+            app(FcmService::class)->sendToMany(
+                $tokens,
+                'New Notice: ' . $notice->title,
+                \Illuminate\Support\Str::limit(strip_tags($notice->body), 100),
+                ['notice_id' => $notice->id, 'type' => 'notice']
+            );
+        }
+    }
+
 
         return redirect()->route('notices.index')->with('success', 'Notice updated successfully.');
     }

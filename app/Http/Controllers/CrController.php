@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\FcmService;
 
 class CrController extends Controller
 {
@@ -58,6 +59,18 @@ public function store(Request $request)
             'target_type' => 'Notice',
             'target_id'   => $notice->id,
         ]);
+
+        if ($notice->notified_teacher_id) {
+        $teacher = \App\Models\User::find($notice->notified_teacher_id);
+        if ($teacher && $teacher->fcm_token) {
+            app(FcmService::class)->send(
+                $teacher->fcm_token,
+                'New Class Notice',
+                "{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
+                ['notice_id' => $notice->id, 'type' => 'cr_notice']
+            );
+        }
+    }
 
         return redirect()->route('cr.index')->with('success', 'Notice posted successfully.');
     }

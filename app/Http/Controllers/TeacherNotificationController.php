@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Services\FcmService;
 
 class TeacherNotificationController extends Controller
 {
@@ -35,6 +36,20 @@ class TeacherNotificationController extends Controller
         'teacher_reply' => $data['teacher_reply'],
         'replied_at'    => now(),
     ]);
+
+
+        $cr = \App\Models\User::find($notice->author_id);
+    if ($cr && $cr->fcm_token) {
+        $teacher = Auth::user();
+        app(FcmService::class)->send(
+            $cr->fcm_token,
+            'Teacher Replied',
+            "{$teacher->name} replied to your notice: {$notice->title}",
+            ['notice_id' => $notice->id, 'type' => 'reply']
+        );
+    }
+
+
     return back()->with('success', 'Reply sent to CR.');
 }
 }
