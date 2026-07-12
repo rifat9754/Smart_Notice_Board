@@ -25,23 +25,10 @@
                     <option value="high">High</option>
                 </select>
             </div>
-<div class="form-group">
-    <label>Year</label>
-    <select name="year" class="form-control" required>
-        <option value="1st">1st Year</option>
-        <option value="2nd">2nd Year</option>
-        <option value="3rd">3rd Year</option>
-        <option value="4th">4th Year</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label>Section</label>
-    <select name="section" class="form-control" required>
-        <option value="A">Section A</option>
-        <option value="B">Section B</option>
-    </select>
-</div>           
+<div class="alert alert-info">
+<i class="fas fa-info-circle"></i>
+This notice will be posted for <b>{{ auth()->user()->year ?? '—' }} Year, Section {{ auth()->user()->section ?? '—' }}</b> automatically.
+</div>          
             <div class="form-group">
                 <label>Notify a Teacher (optional)</label>
                 <select name="notified_teacher_id" class="form-control">

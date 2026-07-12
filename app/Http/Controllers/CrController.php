@@ -27,30 +27,30 @@ class CrController extends Controller
         return view('cr.create', compact('teachers'));
     }
 
-    public function store(Request $request)
-    {
-$data = $request->validate([
-    'title'               => 'required|string|max:255',
-    'body'                => 'required|string',
-    'priority'            => 'required|in:high,medium,low',
-    'year'                => 'required|in:1st,2nd,3rd,4th',
-    'section'             => 'required|in:A,B',
-    'notified_teacher_id' => 'nullable|exists:users,id',
-]);
+public function store(Request $request)
+{
+    $user = Auth::user();
 
-        $notice = Notice::create([
-            'title'               => $data['title'],
-            'body'                => $data['body'],
-            'type'                => 'text',
-            'priority'            => $data['priority'],
-            'status'              => 'published',   // CR notice সরাসরি প্রকাশ
-            'is_emergency'        => false,
-            'author_id'           => Auth::id(),
-            'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
-            'notified_seen'       => false,
-            'year'    => $data['year'],
-            'section' => $data['section'],
-        ]);
+    $data = $request->validate([
+        'title'               => 'required|string|max:255',
+        'body'                => 'required|string',
+        'priority'            => 'required|in:high,medium,low',
+        'notified_teacher_id' => 'nullable|exists:users,id',
+    ]);
+
+    $notice = Notice::create([
+        'title'               => $data['title'],
+        'body'                => $data['body'],
+        'type'                => 'text',
+        'priority'            => $data['priority'],
+        'status'              => 'published',
+        'is_emergency'        => false,
+        'author_id'           => $user->id,
+        'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
+        'notified_seen'       => false,
+        'year'    => $user->year,
+        'section' => $user->section,
+    ]);
 
         AuditLog::create([
             'user_id'     => Auth::id(),
