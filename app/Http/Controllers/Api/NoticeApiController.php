@@ -10,18 +10,35 @@ use App\Services\FcmService;
 
 class NoticeApiController extends Controller
 {
-    public function index()
+public function index(Request $request)
     {
+        $user  = $request->user();
         $today = now()->toDateString();
 
-        $notices = Notice::where('status', 'published')
+        // ── Departmental notices (admin/teacher-এর) ──
+        $departmental = Notice::where('status', 'published')
+            ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))
             ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
             ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
             ->latest()
             ->get()
             ->map(fn($n) => $this->format($n));
 
-        return response()->json($notices);
+        // ── Class updates (CR-এর) ──
+        $classQuery = Notice::where('status', 'published')
+            ->whereHas('author', fn($q) => $q->where('role', 'cr'));
+
+        if (in_array($user->role, ['student', 'cr']) && $user->year && $user->section) {
+            $classQuery->where('year', $user->year)
+                       ->where('section', $user->section);
+        }
+
+        $classUpdates = $classQuery->latest()->get()->map(fn($n) => $this->format($n));
+
+        return response()->json([
+            'departmental'  => $departmental->values(),
+            'class_updates' => $classUpdates->values(),
+        ]);
     }
 
     public function show(Notice $notice)
@@ -35,7 +52,7 @@ class NoticeApiController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    private function format($n)
+private function format($n)
     {
         return [
             'id'         => $n->id,
@@ -45,6 +62,9 @@ class NoticeApiController extends Controller
             'priority'   => $n->priority,
             'file_url'   => $n->file_path ? asset('storage/' . $n->file_path) : null,
             'ai_summary' => $n->ai_summary,
+            'year'       => $n->year,
+            'section'    => $n->section,
+            'author'     => $n->author->name ?? null,
             'created_at' => $n->created_at,
         ];
     }
@@ -191,7 +211,7 @@ public function replyToNotice(Request $request, Notice $notice)
         );
     }
 
-    
+
     return response()->json(['ok' => true]);
 }
 }
