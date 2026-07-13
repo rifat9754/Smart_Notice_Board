@@ -425,7 +425,7 @@ function renderClassUpdates() {
         <div class="cu-item">
             ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
             <span class="cu-title">${u.title}</span>
-            <span class="cu-body">${u.body.length > 55 ? u.body.slice(0,55) + '…' : u.body}</span>
+            <span class="cu-body">${u.body.length > 175 ? u.body.slice(0,175) + '…' : u.body}</span>
         </div>
     `).join('');
 }
