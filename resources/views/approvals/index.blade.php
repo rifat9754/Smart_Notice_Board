@@ -36,6 +36,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Email Verified</th>
                         <th>Requested Role</th>
                         <th>Approve As</th>
                         <th>Actions</th>
@@ -51,6 +52,14 @@
                         <td>{{ $u->name }}</td>
 
                         <td>{{ $u->email }}</td>
+
+                        <td>
+                            @if($u->email_verified_at)
+                                <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                            @else
+                                <span class="badge badge-warning"><i class="fas fa-clock"></i> Not verified</span>
+                            @endif
+                        </td>
 
                         <td>
                             <span class="badge badge-secondary">
@@ -141,10 +150,11 @@
 
                 <thead>
 
-                <tr>
+<tr>
 
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Email Verified</th>
                     <th>Role</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -164,17 +174,17 @@
                         <td>{{ $u->email }}</td>
 
                         <td>
-
-                            <span class="badge badge-primary">
-                                {{ $u->role }}
-                            </span>
-
+                            @if($u->email_verified_at)
+                                <span class="badge badge-success"><i class="fas fa-check"></i> Verified</span>
+                            @else
+                                <span class="badge badge-warning"><i class="fas fa-clock"></i> Not verified</span>
+                            @endif
                         </td>
 
                         <td>
 
-                            <span class="badge badge-{{ $u->status=='active' ? 'success' : 'secondary' }}">
-                                {{ $u->status }}
+                            <span class="badge badge-primary">
+                                {{ $u->role }}
                             </span>
 
                         </td>

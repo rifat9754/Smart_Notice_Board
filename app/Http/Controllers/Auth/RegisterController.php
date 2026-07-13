@@ -23,6 +23,8 @@ class RegisterController extends Controller
 
     protected function registered(\Illuminate\Http\Request $request, $user)
 {
+    event(new Registered($user));
+    
     auth()->logout();
     return redirect('/login')->with('error',
         'Registration successful! Please wait for admin approval before logging in.');

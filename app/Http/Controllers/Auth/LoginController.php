@@ -19,12 +19,18 @@ class LoginController extends Controller
     }
 
 
-    protected function authenticated(\Illuminate\Http\Request $request, $user)
+protected function authenticated(\Illuminate\Http\Request $request, $user)
     {
-        if ($user->status !== 'active') {
-            auth()->logout();
-            return redirect('/login')->with('error',
-                'Your account is awaiting admin approval (or has been deactivated).');
+if (!$user->hasVerifiedEmail()) {
+auth()->logout();
+return redirect('/login')->with('error',
+'Please verify your email address first. Check your inbox for the verification link.');
+        }
+
+if ($user->status !== 'active') {
+auth()->logout();
+return redirect('/login')->with('error',
+'Your account is awaiting admin approval (or has been deactivated).');
         }
     }
 
