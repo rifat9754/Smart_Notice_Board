@@ -25,6 +25,20 @@ class AuthController extends Controller
             ]);
         }
 
+        // email verified?
+        if (! $user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Please verify your email address first. Check your inbox for the verification link.',
+            ], 403);
+        }
+
+        // admin approved?
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'Your account is pending admin approval.',
+            ], 403);
+        }
+
         $token = $user->createToken('mobile')->plainTextToken;
 
         return response()->json([
@@ -40,37 +54,40 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-{
-    $data = $request->validate([
-        'name'     => 'required|string|max:255',
-        'email'    => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
-        'role'     => 'required|in:student,teacher',
-        'year'     => 'required_if:role,student|nullable|in:1st,2nd,3rd,4th',
-        'section'  => 'required_if:role,student|nullable|in:A,B',
-    ]);
+    {
+        $data = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role'     => 'required|in:student,teacher',
+            'year'     => 'required_if:role,student|nullable|in:1st,2nd,3rd,4th',
+            'section'  => 'required_if:role,student|nullable|in:A,B',
+        ]);
 
-    // student হলে email অবশ্যই @stud.kuet.ac.bd
-    if ($data['role'] === 'student' && !str_ends_with($data['email'], '@stud.kuet.ac.bd')) {
+        // student হলে email অবশ্যই @stud.kuet.ac.bd
+        if ($data['role'] === 'student' && !str_ends_with($data['email'], '@stud.kuet.ac.bd')) {
+            return response()->json([
+                'message' => 'Students must use a @stud.kuet.ac.bd email.'
+            ], 422);
+        }
+
+        $user = User::create([
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role'     => $data['role'],
+            'status'   => 'pending',
+            'year'     => $data['year'] ?? null,
+            'section'  => $data['section'] ?? null,
+        ]);
+
+        // verification email পাঠাও
+        event(new \Illuminate\Auth\Events\Registered($user));
+
         return response()->json([
-            'message' => 'Students must use a @stud.kuet.ac.bd email.'
-        ], 422);
+            'message' => 'Registration successful! Please check your email to verify your address, then wait for admin approval.',
+        ], 201);
     }
-
-    $user = \App\Models\User::create([
-        'name'     => $data['name'],
-        'email'    => $data['email'],
-        'password' => \Hash::make($data['password']),
-        'role'     => $data['role'],
-        'status'   => 'pending',   // admin approval লাগবে
-        'year'     => $data['year'] ?? null,
-        'section'  => $data['section'] ?? null,
-    ]);
-
-    return response()->json([
-        'message' => 'Registration successful! Please wait for admin approval before logging in.',
-    ], 201);
-}
 
     public function logout(Request $request)
     {
@@ -79,12 +96,12 @@ class AuthController extends Controller
     }
 
     public function saveFcmToken(Request $request)
-{
-    $request->validate(['fcm_token' => 'required|string']);
+    {
+        $request->validate(['fcm_token' => 'required|string']);
 
-    $user = $request->user();
-    $user->update(['fcm_token' => $request->fcm_token]);
+        $user = $request->user();
+        $user->update(['fcm_token' => $request->fcm_token]);
 
-    return response()->json(['message' => 'Token saved']);
-}
+        return response()->json(['message' => 'Token saved']);
+    }
 }
