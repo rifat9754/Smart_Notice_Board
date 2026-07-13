@@ -12,6 +12,7 @@ Route::get('/display', [DisplayController::class, 'index']);
 Route::get('/class-updates', [\App\Http\Controllers\Api\DisplayController::class, 'classUpdates']);
 Route::post('/notices/{notice}/view', [NoticeApiController::class, 'logView']);
 Route::get('/events', [\App\Http\Controllers\Api\DisplayController::class, 'events']);
+Route::get('/ticker', [\App\Http\Controllers\Api\DisplayController::class, 'ticker']);
 
 // Protected (mobile app — needs token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,7 +29,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/my-cr-notices/{notice}', [\App\Http\Controllers\Api\NoticeApiController::class, 'deleteCrNotice']);
 
     Route::post('/fcm-token', [\App\Http\Controllers\Api\AuthController::class, 'saveFcmToken']);
-
-
-
 });

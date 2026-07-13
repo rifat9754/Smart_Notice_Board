@@ -259,7 +259,7 @@
             padding-left: 100%;
             font-size: clamp(14px, 1.6vw, 20px);
             color: var(--muted-2);
-            animation: scroll 22s linear infinite;
+            animation: scroll 30s linear infinite;
         }
         @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
@@ -320,7 +320,7 @@
         <div id="cuList"></div>
     </div>
 
-    <div class="ticker"><span id="tickerText">Welcome to the department notice board</span></div>
+<div class="ticker"><span id="tickerText">Welcome to the department notice board</span></div>
 
     <script>
         const BOARD_ID = {{ $boardId }};

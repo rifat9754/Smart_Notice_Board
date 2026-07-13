@@ -16,7 +16,7 @@ class DisplayController extends Controller
 
         // 1) Active notices: published, within date window — CR notices excluded (they go to Class Updates)
         $notices = Notice::where('status', 'published')
-            ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   // without CR 
+            ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   
             ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
             ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
             ->withCount('views')
@@ -115,5 +115,35 @@ class DisplayController extends Controller
         'image' => asset('storage/'.$e->image_path),
     ]);
     return response()->json(['events' => $events]);
+}
+
+public function ticker()
+{
+    // ১. active custom ticker message আছে?
+    $custom = \App\Models\TickerMessage::where('is_active', true)
+        ->latest()
+        ->pluck('message')
+        ->toArray();
+
+    if (!empty($custom)) {
+        return response()->json([
+            'source'   => 'custom',
+            'messages' => $custom,
+        ]);
+    }
+
+    // ২. না থাকলে — সব published notice-এর title
+    $today = now()->toDateString();
+
+    $titles = \App\Models\Notice::where('status', 'published')
+        ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
+        ->latest()
+        ->pluck('title')
+        ->toArray();
+
+    return response()->json([
+        'source'   => 'notices',
+        'messages' => $titles,
+    ]);
 }
 }

@@ -83,3 +83,10 @@ Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function (
     Route::put('/promotion/student/{user}', [\App\Http\Controllers\PromotionController::class, 'updateStudent'])->name('promotion.updateStudent');
     Route::delete('/promotion/delete-final-year', [\App\Http\Controllers\PromotionController::class, 'deleteFinalYear'])->name('promotion.deleteFinalYear');
 });
+
+Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(function () {
+    Route::get('/ticker', [\App\Http\Controllers\TickerController::class, 'index'])->name('ticker.index');
+    Route::post('/ticker', [\App\Http\Controllers\TickerController::class, 'store'])->name('ticker.store');
+    Route::patch('/ticker/{ticker}/toggle', [\App\Http\Controllers\TickerController::class, 'toggle'])->name('ticker.toggle');
+    Route::delete('/ticker/{ticker}', [\App\Http\Controllers\TickerController::class, 'destroy'])->name('ticker.destroy');
+});

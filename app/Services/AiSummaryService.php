@@ -13,7 +13,7 @@ class AiSummaryService
             return null;
         }
 
-        $text = mb_substr($text, 0, 12000); // বড় হলে কেটে নাও
+        $text = mb_substr($text, 0, 12000); 
 
 $prompt = "Summarize the following notice as a bulletin for a public notice board.\n\n"
 

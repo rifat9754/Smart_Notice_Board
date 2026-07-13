@@ -77,12 +77,18 @@ new QRCode(document.getElementById("qrcode"), {
 }
 
 // ---- ticker 
-function updateTicker() {
-    const items = playlist
-        .filter(n => isEmergency || n.priority === 'high')
-        .map(n => n.title);
-    const text = items.length ? items.join('     ●     ') : 'Department Notice Board';
-    document.getElementById('tickerText').textContent = text;
+async function updateTicker() {
+    try {
+        const res = await fetch(`${API_URL}/ticker`);
+        const data = await res.json();
+        const messages = data.messages || [];
+        const text = messages.length
+            ? messages.join('     ●     ')
+            : 'Welcome to the Department of CSE, KUET';
+        document.getElementById('tickerText').textContent = text;
+    } catch (e) {
+        document.getElementById('tickerText').textContent = 'Welcome to the Department of CSE, KUET';
+    }
 }
 
 // ---- per 8 second notice
@@ -96,3 +102,4 @@ function nextNotice() {
 fetchPlaylist();                       // first
 setInterval(fetchPlaylist, 8000);      // per 8 sec new data
 setInterval(nextNotice, 8000);         // per 8 seconds to the next notice
+setInterval(updateTicker, 30000);      // প্রতি ৩০ সেকেন্ডে ticker আলাদাভাবে refresh

@@ -417,6 +417,14 @@ return [
             'icon_color' => 'cyan',
             'url' => '#',
         ], */
+
+[
+    'text'  => 'Live Ticker',
+    'route' => 'ticker.index',
+    'icon'  => 'fas fa-fw fa-bullhorn',
+    'can'   => 'is-teacher-or-admin',
+],
+
     ],
 
     /*
