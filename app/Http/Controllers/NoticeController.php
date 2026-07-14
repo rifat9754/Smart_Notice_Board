@@ -15,11 +15,31 @@ use Smalot\PdfParser\Parser;
 
 class NoticeController extends Controller
 {
-    public function index()
-    {
-        $notices = Notice::with('author')->latest()->get();
-        return view('notices.index', compact('notices'));
-    }
+public function index()
+{
+    $user = Auth::user();
+
+    // ১. Main notices (admin/teacher-এর, সবার জন্য)
+    $main = Notice::with('author')
+        ->where('audience', 'all')
+        ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))
+        ->latest()
+        ->get();
+
+    // ২. Notices from CR
+    $fromCr = Notice::with('author', 'course')
+        ->whereHas('author', fn($q) => $q->where('role', 'cr'))
+        ->latest()
+        ->get();
+
+    // ৩. Notices for teachers (admin-এর পাঠানো)
+    $forTeachers = Notice::with('author')
+        ->where('audience', 'teachers')
+        ->latest()
+        ->get();
+
+    return view('notices.index', compact('main', 'fromCr', 'forTeachers'));
+}
 
     public function create()
     {
@@ -133,6 +153,7 @@ public function destroy(Notice $notice)
             'time_end'    => 'nullable',
             'board_id'    => 'nullable|exists:boards,id',
             'attachment'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+
         ]);
     }
 

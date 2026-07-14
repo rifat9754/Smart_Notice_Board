@@ -399,6 +399,13 @@ return [
 ],
 
 [
+    'text'  => 'Notice for Teachers',
+    'route' => 'teacher-notices.index',
+    'icon'  => 'fas fa-fw fa-chalkboard-teacher',
+    'can'   => 'is-admin',
+],
+
+[
     'text'  => 'Live Ticker',
     'route' => 'ticker.index',
     'icon'  => 'fas fa-fw fa-bullhorn',
@@ -431,13 +438,6 @@ return [
             'icon_color' => 'cyan',
             'url' => '#',
         ], */
-
-[
-    'text'  => 'Live Ticker',
-    'route' => 'ticker.index',
-    'icon'  => 'fas fa-fw fa-bullhorn',
-    'can'   => 'is-teacher-or-admin',
-],
 
     ],
 

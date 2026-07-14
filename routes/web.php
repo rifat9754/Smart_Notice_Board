@@ -126,3 +126,12 @@ Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(fu
     Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function () {
     Route::resource('courses', \App\Http\Controllers\CourseController::class);
 });
+
+Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function () {
+    Route::get('/teacher-notices', [\App\Http\Controllers\TeacherNoticeController::class, 'index'])->name('teacher-notices.index');
+    Route::get('/teacher-notices/create', [\App\Http\Controllers\TeacherNoticeController::class, 'create'])->name('teacher-notices.create');
+    Route::post('/teacher-notices', [\App\Http\Controllers\TeacherNoticeController::class, 'store'])->name('teacher-notices.store');
+    Route::delete('/teacher-notices/{notice}', [\App\Http\Controllers\TeacherNoticeController::class, 'destroy'])->name('teacher-notices.destroy');
+    Route::get('/teacher-notices/{notice}/edit', [\App\Http\Controllers\TeacherNoticeController::class, 'edit'])->name('teacher-notices.edit');
+    Route::put('/teacher-notices/{notice}', [\App\Http\Controllers\TeacherNoticeController::class, 'update'])->name('teacher-notices.update');
+});

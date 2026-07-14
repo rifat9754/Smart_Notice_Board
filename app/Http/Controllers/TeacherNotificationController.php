@@ -10,20 +10,30 @@ use App\Services\FcmService;
 class TeacherNotificationController extends Controller
 {
    
-    public function index()
-    {
-        $notices = Notice::where('notified_teacher_id', Auth::id())
-            ->with('author')
-            ->latest()
-            ->get();
+public function index()
+{
+    $user = Auth::user();
 
+    // ১. CR-এর পাঠানো (এই teacher-কে notify করা) — আগের মতো
+    $fromCr = Notice::with('author', 'course')
+        ->where('notified_teacher_id', $user->id)
+        ->latest()
+        ->get();
 
-        Notice::where('notified_teacher_id', Auth::id())
-            ->where('notified_seen', false)
-            ->update(['notified_seen' => true]);
+    // ২. Admin-এর teacher-notice
+    $forTeachers = Notice::with('author')
+        ->where('audience', 'teachers')
+        ->where('status', 'published')
+        ->latest()
+        ->get();
 
-        return view('teacher.notifications', compact('notices'));
-    }
+    // seen mark করো (CR notice গুলো)
+    Notice::where('notified_teacher_id', $user->id)
+        ->where('notified_seen', false)
+        ->update(['notified_seen' => true]);
+
+    return view('teacher.notifications', compact('fromCr', 'forTeachers'));
+}
 
     public function reply(Request $request, Notice $notice)
 {

@@ -28,6 +28,7 @@ class Notice extends Model
     'teacher_reply',
     'replied_at',
     'course_id',
+    'audience',
 ];
 public function author()
 {

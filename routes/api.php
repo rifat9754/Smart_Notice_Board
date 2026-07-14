@@ -13,6 +13,7 @@ Route::get('/class-updates', [\App\Http\Controllers\Api\DisplayController::class
 Route::post('/notices/{notice}/view', [NoticeApiController::class, 'logView']);
 Route::get('/events', [\App\Http\Controllers\Api\DisplayController::class, 'events']);
 Route::get('/ticker', [\App\Http\Controllers\Api\DisplayController::class, 'ticker']);
+Route::get('/teacher-notices', [\App\Http\Controllers\Api\DisplayController::class, 'teacherNotices']);
 
 // Protected (mobile app — needs token)
 Route::middleware('auth:sanctum')->group(function () {

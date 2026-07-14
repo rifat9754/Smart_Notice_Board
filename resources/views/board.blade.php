@@ -204,22 +204,66 @@
             font-weight: 700; color: #fff;
         }
 
-        /* ---------- Class Updates ---------- */
-        .class-updates {
-            background: rgba(16, 32, 60, 0.6);
-            border-top: 1px solid rgba(34,197,94,0.35);
-            padding: clamp(10px, 1.2vw, 16px) clamp(20px, 3vw, 40px);
-            max-height: 20vh;
-            overflow: hidden;
-            flex-shrink: 0;
-            backdrop-filter: blur(6px);
-        }
-        .class-updates h3 {
-            font-size: clamp(13px, 1.5vw, 17px);
-            color: var(--green-soft);
-            margin-bottom: 8px;
-            display: flex; align-items: center; gap: 8px;
-        }
+/* ---------- Bottom two panels ---------- */
+.bottom-panels {
+    display: flex;
+    gap: clamp(12px, 1.5vw, 20px);
+    padding: clamp(10px, 1.2vw, 16px) clamp(20px, 3vw, 40px);
+    max-height: 20vh;
+    flex-shrink: 0;
+    background: rgba(16, 32, 60, 0.6);
+    border-top: 1px solid rgba(34,197,94,0.35);
+    backdrop-filter: blur(6px);
+}
+.bottom-panels .panel {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+.bottom-panels .panel + .panel {
+    padding-left: clamp(20px, 2.5vw, 32px);
+    margin-left: clamp(4px, 0.5vw, 8px);
+    position: relative;
+}
+.bottom-panels .panel + .panel::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8%; bottom: 8%;
+    width: 3px;
+    background: linear-gradient(180deg,
+        transparent,
+        rgba(148,163,184,0.7) 20%,
+        rgba(148,163,184,0.7) 80%,
+        transparent);
+    border-radius: 2px;
+}
+.bottom-panels h3 {
+    font-size: clamp(13px, 1.5vw, 17px);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+}
+.class-updates h3 { color: var(--green-soft); }
+.teacher-notices h3 { color: #fbbf24; }
+
+/* teacher notice items */
+.tn-item {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: clamp(13px, 1.3vw, 17px);
+}
+.tn-item:last-child { border-bottom: none; }
+.tn-badge {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #fff; font-size: 0.7em; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px; flex-shrink: 0;
+}
+.tn-title { font-weight: 700; color: #fff; }
+.tn-body { color: var(--muted); font-size: 0.85em; }
+
+
+
+
         .cu-item {
             display: flex; align-items: baseline; gap: 12px;
             padding: 6px 0;
@@ -315,10 +359,20 @@
     </div>
 
     <!-- Class Updates -->
-    <div class="class-updates" id="classUpdates" style="display:none;">
-        <h3>📋 Notices from CR</h3>
+<!-- Bottom: two panels -->
+<div class="bottom-panels" id="bottomPanels" style="display:none;">
+    <!-- Left: Notices from CR -->
+    <div class="panel" id="classUpdates" style="display:none;">
+        <h3 class="cu-head">📋 Notices from CR</h3>
         <div id="cuList"></div>
     </div>
+
+    <!-- Right: Notice for Teachers -->
+    <div class="panel" id="teacherNotices" style="display:none;">
+        <h3 class="tn-head">📋 Notice for Teachers</h3>
+        <div id="tnList"></div>
+    </div>
+</div>
 
 <div class="ticker"><span id="tickerText">Welcome to the department notice board</span></div>
 
@@ -413,10 +467,11 @@ async function loadClassUpdates() {
 function renderClassUpdates() {
     const box = document.getElementById('classUpdates');
     const list = document.getElementById('cuList');
-    if (cuAll.length === 0) { box.style.display = 'none'; return; }
+    if (cuAll.length === 0) { box.style.display = 'none'; updateBottomPanels(); return; }
     box.style.display = 'block';
-//cr 2
-    const perPage = 2;                                   
+    updateBottomPanels();
+
+    const perPage = 2;
     const totalPages = Math.ceil(cuAll.length / perPage);
     const start = (cuPage % totalPages) * perPage;
     const pageItems = cuAll.slice(start, start + perPage);
@@ -425,7 +480,7 @@ function renderClassUpdates() {
         <div class="cu-item">
             ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
             <span class="cu-title">${u.title}</span>
-            <span class="cu-body">${u.body.length > 175 ? u.body.slice(0,175) + '…' : u.body}</span>
+            <span class="cu-body">${u.body.length > 55 ? u.body.slice(0,55) + '…' : u.body}</span>
         </div>
     `).join('');
 }
@@ -440,6 +495,63 @@ function rotateClassUpdates() {
 loadClassUpdates();
 setInterval(loadClassUpdates, 8000);  
 setInterval(rotateClassUpdates, 4000);  
+
+
+
+// ── Notice for Teachers ──
+let tnAll = [];
+let tnPage = 0;
+
+async function loadTeacherNotices() {
+    try {
+        const res = await fetch(`${API_URL}/teacher-notices`);
+        const data = await res.json();
+        tnAll = data.notices || [];
+        renderTeacherNotices();
+    } catch (e) {
+        document.getElementById('teacherNotices').style.display = 'none';
+        updateBottomPanels();
+    }
+}
+
+function renderTeacherNotices() {
+    const box = document.getElementById('teacherNotices');
+    const list = document.getElementById('tnList');
+
+    if (tnAll.length === 0) { box.style.display = 'none'; updateBottomPanels(); return; }
+    box.style.display = 'block';
+    updateBottomPanels();
+
+    const perPage = 2;
+    const totalPages = Math.ceil(tnAll.length / perPage);
+    const start = (tnPage % totalPages) * perPage;
+    const pageItems = tnAll.slice(start, start + perPage);
+
+    list.innerHTML = pageItems.map(n => `
+        <div class="tn-item">
+            <span class="tn-title">${n.title}</span>
+            <span class="tn-body">${n.body.length > 55 ? n.body.slice(0,55) + '…' : n.body}</span>
+        </div>
+    `).join('');
+}
+
+function rotateTeacherNotices() {
+    if (tnAll.length > 2) { tnPage++; renderTeacherNotices(); }
+}
+
+// দুটোর একটাও না থাকলে পুরো bottom bar লুকাও
+function updateBottomPanels() {
+    const cu = document.getElementById('classUpdates');
+    const tn = document.getElementById('teacherNotices');
+    const wrap = document.getElementById('bottomPanels');
+
+    const anyVisible = cu.style.display === 'block' || tn.style.display === 'block';
+    wrap.style.display = anyVisible ? 'flex' : 'none';
+}
+
+loadTeacherNotices();
+setInterval(loadTeacherNotices, 8000);
+setInterval(rotateTeacherNotices, 6000);
     </script>
 </body>
 </html>

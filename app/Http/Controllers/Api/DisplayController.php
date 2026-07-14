@@ -16,6 +16,7 @@ class DisplayController extends Controller
 
         // 1) Active notices: published, within date window — CR notices excluded (they go to Class Updates)
         $notices = Notice::where('status', 'published')
+            ->where('audience', 'all') 
             ->whereDoesntHave('author', fn($q) => $q->where('role', 'cr'))   
             ->where(fn($q) => $q->whereNull('show_from')->orWhereDate('show_from', '<=', $today))
             ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
@@ -146,4 +147,24 @@ public function ticker()
         'messages' => $titles,
     ]);
 }
+public function teacherNotices()
+{
+    $today = now()->toDateString();
+
+    $notices = Notice::where('status', 'published')
+        ->where('audience', 'teachers')
+        ->where(fn($q) => $q->whereNull('show_to')->orWhereDate('show_to', '>=', $today))
+        ->latest()
+        ->take(6)
+        ->get()
+        ->map(fn($n) => [
+            'id'       => $n->id,
+            'title'    => $n->title,
+            'body'     => $n->body,
+            'priority' => $n->priority,
+        ]);
+
+    return response()->json(['notices' => $notices]);
+}
+
 }
