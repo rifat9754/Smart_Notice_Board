@@ -75,28 +75,41 @@
                 @endforelse
             </div>
 
-            {{-- For Teachers — শুধু পড়ার --}}
-            <div class="tab-pane fade" id="forteachers">
-                @forelse($forTeachers as $n)
-                    <div class="card card-outline card-warning mb-3">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <span class="badge badge-{{ $n->priority=='high'?'danger':($n->priority=='medium'?'warning':'info') }}">
-                                    {{ strtoupper($n->priority) }}
-                                </span>
-                                <span class="badge badge-warning">FOR TEACHERS</span>
-                            </div>
+{{-- For Teachers tab --}}
+@forelse($forTeachers as $n)
+    <div class="card card-outline card-warning mb-3">
+        <div class="card-body">
+            <div class="mb-2">
+                <span class="badge badge-{{ $n->priority=='high'?'danger':($n->priority=='medium'?'warning':'info') }}">
+                    {{ strtoupper($n->priority) }}
+                </span>
+                <span class="badge badge-warning">FOR TEACHERS</span>
+            </div>
 
-                            <h5>{{ $n->title }}</h5>
-                            <p class="mb-2">{{ $n->body }}</p>
-                            <small class="text-muted">
-                                From: <b>{{ $n->author->name ?? 'Admin' }}</b> · {{ $n->created_at->format('d M Y, h:i A') }}
-                            </small>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-muted text-center py-4">No notices for teachers yet.</p>
-                @endforelse
+            <h5>{{ $n->title }}</h5>
+            <p class="mb-2">{{ $n->body }}</p>
+            <small class="text-muted">
+                From: <b>{{ $n->author->name ?? 'Admin' }}</b> · {{ $n->created_at->format('d M Y, h:i A') }}
+            </small>
+
+            {{-- শুধু admin edit/delete দেখবে --}}
+            @can('is-admin')
+                <div class="mt-3">
+                    <a href="{{ route('teacher-notices.edit', $n) }}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form action="{{ route('teacher-notices.destroy', $n) }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('Delete this notice?')">
+                        @csrf @method('DELETE')
+                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                    </form>
+                </div>
+            @endcan
+        </div>
+    </div>
+@empty
+    <p class="text-muted text-center py-4">No notices for teachers yet.</p>
+@endforelse
             </div>
 
         </div>
