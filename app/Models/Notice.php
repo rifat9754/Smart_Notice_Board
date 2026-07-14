@@ -26,7 +26,8 @@ class Notice extends Model
     'year', 
     'section', 
     'teacher_reply',
-    'replied_at', 
+    'replied_at',
+    'course_id',
 ];
 public function author()
 {
@@ -54,6 +55,11 @@ public function board()
 public function notifiedTeacher()
 {
     return $this->belongsTo(\App\Models\User::class, 'notified_teacher_id');
+}
+
+public function course()
+{
+return $this->belongsTo(\App\Models\Course::class);
 }
 
 }

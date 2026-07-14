@@ -380,13 +380,32 @@ return [
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
-   /*     [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ], */
+
+
+        [
+    'text' => 'Student\'s Yearly Promotion',
+    'route' => 'promotion.index',
+    'icon' => 'fas fa-fw fa-user-graduate',
+    'can' => 'is-admin',
+],
+
+
+
+ [
+    'text'  => 'Courses',
+    'route' => 'courses.index',
+    'icon'  => 'fas fa-fw fa-book',
+    'can'   => 'is-admin',
+],
+
+[
+    'text'  => 'Live Ticker',
+    'route' => 'ticker.index',
+    'icon'  => 'fas fa-fw fa-bullhorn',
+    'can'   => 'is-teacher-or-admin',
+],
+
+
         ['header' => 'account_settings'],
 [
     'text' => 'Profile',
@@ -394,12 +413,7 @@ return [
     'icon' => 'fas fa-fw fa-user',
 ],
 
-[
-    'text' => 'Year Promotion',
-    'route' => 'promotion.index',
-    'icon' => 'fas fa-fw fa-user-graduate',
-    'can' => 'is-admin',
-],
+
 
    /*     ['header' => 'labels'],
         [

@@ -21,59 +21,65 @@ class CrController extends Controller
         return view('cr.index', compact('notices'));
     }
 
-    // নতুন notice form (teacher list সহ)
-    public function create()
+// নতুন notice form (course list সহ)
+public function create()
     {
-        $teachers = User::where('role', 'teacher')->where('status', 'active')->orderBy('name')->get();
-        return view('cr.create', compact('teachers'));
+$courses = \App\Models\Course::with('teachers')->orderBy('course_no')->get();
+return view('cr.create', compact('courses'));
     }
 
-public function store(Request $request)
+ public function store(Request $request)
 {
-    $user = Auth::user();
+$user = Auth::user();
 
-    $data = $request->validate([
-        'title'               => 'required|string|max:255',
-        'body'                => 'required|string',
-        'priority'            => 'required|in:high,medium,low',
-        'notified_teacher_id' => 'nullable|exists:users,id',
+$data = $request->validate([
+'title'               => 'required|string|max:255',
+'body'                => 'required|string',
+'priority'            => 'required|in:high,medium,low',
+'course_id'           => 'required|exists:courses,id',
+'notified_teacher_id' => 'required|exists:users,id',
     ]);
 
-    $notice = Notice::create([
-        'title'               => $data['title'],
-        'body'                => $data['body'],
-        'type'                => 'text',
-        'priority'            => $data['priority'],
-        'status'              => 'published',
-        'is_emergency'        => false,
-        'author_id'           => $user->id,
-        'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
-        'notified_seen'       => false,
-        'year'    => $user->year,
-        'section' => $user->section,
+// যাচাই: এই teacher কি সত্যিই ওই course-এর?
+$course = \App\Models\Course::find($data['course_id']);
+if (!$course->teachers->contains($data['notified_teacher_id'])) {
+return back()->withErrors(['notified_teacher_id' => 'The selected teacher does not teach this course.'])->withInput();
+}
+
+$notice = Notice::create([
+'title'               => $data['title'],
+'body'                => $data['body'],
+'type'                => 'text',
+'priority'            => $data['priority'],
+'status'              => 'published',
+'is_emergency'        => false,
+'author_id'           => $user->id,
+'course_id'           => $data['course_id'],
+'notified_teacher_id' => $data['notified_teacher_id'],
+'notified_seen'       => false,
+'year'    => $user->year,
+'section' => $user->section,
     ]);
 
-        AuditLog::create([
-            'user_id'     => Auth::id(),
-            'action'      => 'created (CR)',
-            'target_type' => 'Notice',
-            'target_id'   => $notice->id,
+AuditLog::create([
+'user_id'     => Auth::id(),
+'action'      => 'created (CR)',
+'target_type' => 'Notice',
+'target_id'   => $notice->id,
         ]);
 
-        if ($notice->notified_teacher_id) {
-        $teacher = \App\Models\User::find($notice->notified_teacher_id);
-        if ($teacher && $teacher->fcm_token) {
-            app(FcmService::class)->send(
-                $teacher->fcm_token,
-                'New Class Notice',
-                "{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
-                ['notice_id' => $notice->id, 'type' => 'cr_notice']
-            );
-        }
+$teacher = \App\Models\User::find($notice->notified_teacher_id);
+if ($teacher && $teacher->fcm_token) {
+app(FcmService::class)->send(
+$teacher->fcm_token,
+"New Notice: {$course->course_no}",
+"{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
+            ['notice_id' => $notice->id, 'type' => 'cr_notice']
+        );
     }
 
-        return redirect()->route('cr.index')->with('success', 'Notice posted successfully.');
-    }
+return redirect()->route('cr.index')->with('success', 'Notice posted successfully.');
+    }   
 
     public function destroy(Notice $notice)
     {

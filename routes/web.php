@@ -122,3 +122,7 @@ Route::middleware(['auth', 'preventback', 'role:super_admin,teacher'])->group(fu
     Route::patch('/ticker/{ticker}/toggle', [\App\Http\Controllers\TickerController::class, 'toggle'])->name('ticker.toggle');
     Route::delete('/ticker/{ticker}', [\App\Http\Controllers\TickerController::class, 'destroy'])->name('ticker.destroy');
 });
+
+    Route::middleware(['auth', 'preventback', 'role:super_admin'])->group(function () {
+    Route::resource('courses', \App\Http\Controllers\CourseController::class);
+});

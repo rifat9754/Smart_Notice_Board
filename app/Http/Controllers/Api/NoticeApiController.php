@@ -158,12 +158,20 @@ public function crStore(Request $request)
     $user = $request->user();
 
     $data = $request->validate([
-        'title'    => 'required|string|max:255',
-        'body'     => 'required|string',
-        'priority' => 'required|in:high,medium,low',
-        'notified_teacher_id' => 'nullable|exists:users,id',
-        // year/section আর form থেকে নিচ্ছি না
+        'title'     => 'required|string|max:255',
+        'body'      => 'required|string',
+        'priority'  => 'required|in:high,medium,low',
+        'course_id' => 'required|exists:courses,id',
+        'notified_teacher_id' => 'required|exists:users,id',
     ]);
+
+    // যাচাই: এই teacher কি সত্যিই ওই course-এর?
+    $course = \App\Models\Course::find($data['course_id']);
+    if (!$course->teachers->contains($data['notified_teacher_id'])) {
+        return response()->json([
+            'message' => 'The selected teacher does not teach this course.',
+        ], 422);
+    }
 
     $notice = Notice::create([
         'title'    => $data['title'],
@@ -172,21 +180,20 @@ public function crStore(Request $request)
         'type'     => 'text',
         'status'   => 'published',
         'author_id'=> $user->id,
-        'year'     => $user->year,       // ← CR-এর profile থেকে auto
-        'section'  => $user->section,    // ← CR-এর profile থেকে auto
-        'notified_teacher_id' => $data['notified_teacher_id'] ?? null,
+        'year'     => $user->year,
+        'section'  => $user->section,
+        'course_id' => $data['course_id'],
+        'notified_teacher_id' => $data['notified_teacher_id'],
     ]);
 
-        if ($notice->notified_teacher_id) {
-        $teacher = \App\Models\User::find($notice->notified_teacher_id);
-        if ($teacher && $teacher->fcm_token) {
-            app(FcmService::class)->send(
-                $teacher->fcm_token,
-                'New Class Notice',
-                "{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
-                ['notice_id' => $notice->id, 'type' => 'cr_notice']
-            );
-        }
+    $teacher = \App\Models\User::find($notice->notified_teacher_id);
+    if ($teacher && $teacher->fcm_token) {
+        app(FcmService::class)->send(
+            $teacher->fcm_token,
+            "New Notice: {$course->course_no}",
+            "{$user->name} ({$user->year}-{$user->section}): {$notice->title}",
+            ['notice_id' => $notice->id, 'type' => 'cr_notice']
+        );
     }
 
     return response()->json(['message' => 'Notice posted', 'notice' => $notice], 201);
@@ -214,4 +221,20 @@ public function replyToNotice(Request $request, Notice $notice)
 
     return response()->json(['ok' => true]);
 }
+
+public function courses()
+{
+    return response()->json(
+        \App\Models\Course::orderBy('course_no')->get(['id', 'course_no', 'course_title'])
+    );
+}
+
+public function courseTeachers(\App\Models\Course $course)
+{
+    return response()->json(
+        $course->teachers()->get(['users.id', 'users.name'])
+    );
+}
+
+
 }

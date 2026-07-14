@@ -3,44 +3,78 @@
 @section('content_header')<h1>Post a Class Notice</h1>@stop
 @section('content')
     @if($errors->any())
-        <div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
+<div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
     @endif
 
-    <div class="card"><div class="card-body">
-        <form action="{{ route('cr.store') }}" method="POST">
+<div class="card"><div class="card-body">
+<form action="{{ route('cr.store') }}" method="POST">
             @csrf
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
-            </div>
-            <div class="form-group">
-                <label>Message</label>
-                <textarea name="body" class="form-control" rows="4" required>{{ old('body') }}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Priority</label>
-                <select name="priority" class="form-control" required>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
-            </div>
+<div class="form-group">
+<label>Title</label>
+<input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
+</div>
+<div class="form-group">
+<label>Message</label>
+<textarea name="body" class="form-control" rows="4" required>{{ old('body') }}</textarea>
+</div>
+<div class="form-group">
+<label>Priority</label>
+<select name="priority" class="form-control" required>
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+</div>
 <div class="alert alert-info">
 <i class="fas fa-info-circle"></i>
 This notice will be posted for <b>{{ auth()->user()->year ?? '—' }} Year, Section {{ auth()->user()->section ?? '—' }}</b> automatically.
-</div>          
-            <div class="form-group">
-                <label>Notify a Teacher (optional)</label>
-                <select name="notified_teacher_id" class="form-control">
-                    <option value="">— No specific teacher —</option>
-                    @foreach($teachers as $t)
-                        <option value="{{ $t->id }}">{{ $t->name }}</option>
+</div>
+
+<div class="form-group">
+<label>Course</label>
+<select name="course_id" id="courseSelect" class="form-control" required>
+<option value="">-- Select Course --</option>
+                    @foreach($courses as $c)
+<option value="{{ $c->id }}" data-teachers='@json($c->teachers->map(fn($t) => ["id" => $t->id, "name" => $t->name]))' {{ old('course_id') == $c->id ? 'selected' : '' }}>
+{{ $c->course_no }} — {{ $c->course_title }}
+</option>
                     @endforeach
-                </select>
-                <small class="form-text text-muted">Selected teacher will be notified about this notice.</small>
-            </div>
-            <button type="submit" class="btn btn-primary">Post Notice</button>
-            <a href="{{ route('cr.index') }}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div></div>
+</select>
+</div>
+
+<div class="form-group">
+<label>Teacher</label>
+<select name="notified_teacher_id" id="teacherSelect" class="form-control" required disabled>
+<option value="">-- Select a course first --</option>
+</select>
+<small class="form-text text-muted">Only teachers assigned to the selected course will appear here.</small>
+</div>
+
+<button type="submit" class="btn btn-primary">Post Notice</button>
+<a href="{{ route('cr.index') }}" class="btn btn-secondary">Cancel</a>
+</form>
+</div></div>
+
+<script>
+document.getElementById('courseSelect').addEventListener('change', function() {
+    const teacherSelect = document.getElementById('teacherSelect');
+    const opt = this.options[this.selectedIndex];
+    const teachers = opt.dataset.teachers ? JSON.parse(opt.dataset.teachers) : [];
+
+    teacherSelect.innerHTML = '<option value="">-- Select Teacher --</option>';
+
+    if (teachers.length === 0) {
+        teacherSelect.disabled = true;
+        return;
+    }
+
+    teachers.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.id;
+        o.textContent = t.name;
+        teacherSelect.appendChild(o);
+    });
+    teacherSelect.disabled = false;
+});
+</script>
 @stop

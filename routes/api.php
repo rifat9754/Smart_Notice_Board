@@ -29,4 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/my-cr-notices/{notice}', [\App\Http\Controllers\Api\NoticeApiController::class, 'deleteCrNotice']);
 
     Route::post('/fcm-token', [\App\Http\Controllers\Api\AuthController::class, 'saveFcmToken']);
+
+    Route::get('/courses', [\App\Http\Controllers\Api\NoticeApiController::class, 'courses']);
+    Route::get('/courses/{course}/teachers', [\App\Http\Controllers\Api\NoticeApiController::class, 'courseTeachers']);
 });
