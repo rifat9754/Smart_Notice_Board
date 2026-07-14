@@ -28,6 +28,7 @@ class CourseController extends Controller
         $data = $request->validate([
             'course_no'    => 'required|string|max:50',
             'course_title' => 'required|string|max:255',
+            'year'         => 'required|in:1st,2nd,3rd,4th',
             'teachers'     => 'required|array|min:1',      // একাধিক teacher
             'teachers.*'   => 'exists:users,id',
         ]);
@@ -35,6 +36,7 @@ class CourseController extends Controller
         $course = Course::create([
             'course_no'    => $data['course_no'],
             'course_title' => $data['course_title'],
+            'year'         => $data['year'], 
         ]);
 
         $course->teachers()->sync($data['teachers']);      // teacher যুক্ত করো

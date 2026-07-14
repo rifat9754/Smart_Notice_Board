@@ -21,10 +21,16 @@ class CrController extends Controller
         return view('cr.index', compact('notices'));
     }
 
-// নতুন notice form (course list সহ)
+
 public function create()
     {
-$courses = \App\Models\Course::with('teachers')->orderBy('course_no')->get();
+$user = Auth::user();
+
+$courses = \App\Models\Course::with('teachers')
+    ->when($user->year, fn($q) => $q->where('year', $user->year))
+    ->orderBy('course_no')
+    ->get();
+
 return view('cr.create', compact('courses'));
     }
 
@@ -40,8 +46,14 @@ $data = $request->validate([
 'notified_teacher_id' => 'required|exists:users,id',
     ]);
 
-// যাচাই: এই teacher কি সত্যিই ওই course-এর?
 $course = \App\Models\Course::find($data['course_id']);
+
+// CR-এর year-এর course কিনা যাচাই
+if ($user->year && $course->year && $course->year !== $user->year) {
+return back()->withErrors(['course_id' => "You can only post notices for your own year's courses."])->withInput();
+}
+
+// যাচাই: এই teacher কি সত্যিই ওই course-এর?
 if (!$course->teachers->contains($data['notified_teacher_id'])) {
 return back()->withErrors(['notified_teacher_id' => 'The selected teacher does not teach this course.'])->withInput();
 }
@@ -83,7 +95,7 @@ return redirect()->route('cr.index')->with('success', 'Notice posted successfull
 
     public function destroy(Notice $notice)
     {
-        // CR শুধু নিজের notice মুছতে পারবে
+        
         if ($notice->author_id !== Auth::id()) {
             abort(403);
         }

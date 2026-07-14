@@ -22,6 +22,19 @@
                 @error('course_title')<span class="invalid-feedback">{{ $message }}</span>@enderror
             </div>
 
+    <div class="form-group">
+    <label>Year</label>
+    <select name="year" class="form-control @error('year') is-invalid @enderror" required>
+        <option value="">-- Select Year --</option>
+        <option value="1st" {{ old('year')=='1st'?'selected':'' }}>1st Year</option>
+        <option value="2nd" {{ old('year')=='2nd'?'selected':'' }}>2nd Year</option>
+        <option value="3rd" {{ old('year')=='3rd'?'selected':'' }}>3rd Year</option>
+        <option value="4th" {{ old('year')=='4th'?'selected':'' }}>4th Year</option>
+    </select>
+    <small class="text-muted">Which year's students take this course?</small>
+    @error('year')<span class="invalid-feedback">{{ $message }}</span>@enderror
+</div>
+
             <div class="form-group">
                 <label>Teachers <small class="text-muted">(select one or more)</small></label>
                 <select name="teachers[]" class="form-control" multiple size="8" required>

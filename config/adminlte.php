@@ -383,7 +383,7 @@ return [
 
 
         [
-    'text' => 'Student\'s Yearly Promotion',
+    'text' => 'Yearly Promotion',
     'route' => 'promotion.index',
     'icon' => 'fas fa-fw fa-user-graduate',
     'can' => 'is-admin',

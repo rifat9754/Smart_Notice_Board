@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $fillable = ['course_no', 'course_title'];
+    protected $fillable = ['course_no', 'course_title','year'];
 
     // এই course-এর teacher-রা (many-to-many)
     public function teachers()

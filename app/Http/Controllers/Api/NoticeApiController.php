@@ -165,8 +165,16 @@ public function crStore(Request $request)
         'notified_teacher_id' => 'required|exists:users,id',
     ]);
 
+$course = \App\Models\Course::find($data['course_id']);
+
+    // CR-এর year-এর course কিনা যাচাই
+    if ($user->year && $course->year && $course->year !== $user->year) {
+        return response()->json([
+            'message' => "You can only post notices for your own year's courses.",
+        ], 422);
+    }
+
     // যাচাই: এই teacher কি সত্যিই ওই course-এর?
-    $course = \App\Models\Course::find($data['course_id']);
     if (!$course->teachers->contains($data['notified_teacher_id'])) {
         return response()->json([
             'message' => 'The selected teacher does not teach this course.',
@@ -222,10 +230,18 @@ public function replyToNotice(Request $request, Notice $notice)
     return response()->json(['ok' => true]);
 }
 
-public function courses()
+public function courses(Request $request)
 {
+    $user = $request->user();
+
+    $query = \App\Models\Course::query();
+
+    if (in_array($user->role, ['cr', 'student']) && $user->year) {
+        $query->where('year', $user->year);
+    }
+
     return response()->json(
-        \App\Models\Course::orderBy('course_no')->get(['id', 'course_no', 'course_title'])
+        $query->orderBy('course_no')->get(['id', 'course_no', 'course_title', 'year'])
     );
 }
 

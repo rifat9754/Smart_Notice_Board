@@ -12,17 +12,25 @@
 <div class="card">
     <div class="card-body table-responsive p-0">
         <table class="table table-hover">
+
+
+
             <thead>
                 <tr>
-                    <th>Course No</th><th>Course Title</th><th>Teachers</th><th>Actions</th>
+                    <th>Course No</th><th>Course Title</th><th>Year</th><th>Teachers</th><th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
             @forelse($courses as $c)
                 <tr>
                     <td><b>{{ $c->course_no }}</b></td>
                     <td>{{ $c->course_title }}</td>
+                    <td><span class="badge badge-secondary">{{ $c->year ?? '—' }}</span></td>
                     <td>
+
+
+
                         @foreach($c->teachers as $t)
                             <span class="badge badge-info">{{ $t->name }}</span>
                         @endforeach
@@ -37,7 +45,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="text-center text-muted py-4">No courses yet.</td></tr>
+               <tr><td colspan="5" class="text-center text-muted py-4">No courses yet.</td></tr>
             @endforelse
             </tbody>
         </table>
