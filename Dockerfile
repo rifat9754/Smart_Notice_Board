@@ -16,12 +16,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-    # PHP upload limits
-RUN echo "upload_max_filesize = 20M\npost_max_size = 25M\nmemory_limit = 256M" >
+# PHP upload limits
+RUN printf "upload_max_filesize=20M\npost_max_size=25M\nmemory_limit=256M\n" > /usr/local/etc/php/conf.d/uploads.ini
 
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
 RUN chmod +x start.sh
+
 CMD ["bash", "start.sh"]
