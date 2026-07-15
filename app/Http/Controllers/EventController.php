@@ -20,7 +20,7 @@ class EventController extends Controller
     {
         $request->validate([
             'title' => 'nullable|string|max:255',
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:20480',
         ]);
 
         $path = $request->file('image')->store('events', 'public');

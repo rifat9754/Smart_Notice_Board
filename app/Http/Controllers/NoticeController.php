@@ -152,7 +152,7 @@ public function destroy(Notice $notice)
             'time_start'  => 'nullable',
             'time_end'    => 'nullable',
             'board_id'    => 'nullable|exists:boards,id',
-            'attachment'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:20480',
 
         ]);
     }
