@@ -69,37 +69,58 @@ private function format($n)
         ];
     }
 
-
-    public function myNotifications(Request $request)
+public function myNotifications(Request $request)
 {
     $user = $request->user();   
-
     if (!in_array($user->role, ['teacher', 'super_admin'])) {
-        return response()->json(['notices' => [], 'unseen' => 0]);
+        return response()->json(['class_updates' => [], 'for_teachers' => [], 'unseen' => 0]);
     }
 
-    $notices = Notice::where('notified_teacher_id', $user->id)
-        ->with('author')
+    // Tab ১: CR-এর পাঠানো (এই teacher-কে notify করা)
+    $classUpdates = Notice::where('notified_teacher_id', $user->id)
+        ->with('author', 'course')
         ->latest()
         ->get()
         ->map(fn($n) => [
-            'id'        => $n->id,
-            'title'     => $n->title,
-            'body'      => $n->body,
-            'priority'  => $n->priority,
-            'year'      => $n->year,
-            'section'   => $n->section,
-            'from'      => $n->author->name ?? 'Unknown',
-            'seen'      => (bool) $n->notified_seen,
-            'created'   => $n->created_at->diffForHumans(),
-            'reply'     => $n->teacher_reply,
+            'id'         => $n->id,
+            'title'      => $n->title,
+            'body'       => $n->body,
+            'priority'   => $n->priority,
+            'year'       => $n->year,
+            'section'    => $n->section,
+            'course'     => $n->course ? "{$n->course->course_no} — {$n->course->course_title}" : null,
+            'from'       => $n->author->name ?? 'Unknown',
+            'seen'       => (bool) $n->notified_seen,
+            'created'    => $n->created_at->diffForHumans(),
+            'reply'      => $n->teacher_reply,
+        ]);
+
+    // Tab ২: admin-এর teacher-notice (সব teacher পায়)
+    $forTeachers = Notice::with('author')
+        ->where('audience', 'teachers')
+        ->where('status', 'published')
+        ->latest()
+        ->get()
+        ->map(fn($n) => [
+            'id'         => $n->id,
+            'title'      => $n->title,
+            'body'       => $n->body,
+            'priority'   => $n->priority,
+            'author'     => $n->author->name ?? 'Admin',
+            'ai_summary' => $n->ai_summary,
+            'created'    => $n->created_at->diffForHumans(),
         ]);
 
     $unseen = Notice::where('notified_teacher_id', $user->id)
         ->where('notified_seen', false)->count();
 
-    return response()->json(['notices' => $notices, 'unseen' => $unseen]);
+    return response()->json([
+        'class_updates' => $classUpdates,
+        'for_teachers'  => $forTeachers,
+        'unseen'        => $unseen,
+    ]);
 }
+
 
 public function myCrNotices(Request $request)
 {
@@ -167,14 +188,14 @@ public function crStore(Request $request)
 
 $course = \App\Models\Course::find($data['course_id']);
 
-    // CR-এর year-এর course কিনা যাচাই
+   
     if ($user->year && $course->year && $course->year !== $user->year) {
         return response()->json([
             'message' => "You can only post notices for your own year's courses.",
         ], 422);
     }
 
-    // যাচাই: এই teacher কি সত্যিই ওই course-এর?
+   
     if (!$course->teachers->contains($data['notified_teacher_id'])) {
         return response()->json([
             'message' => 'The selected teacher does not teach this course.',
