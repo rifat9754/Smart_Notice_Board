@@ -184,6 +184,7 @@ public function crStore(Request $request)
         'priority'  => 'required|in:high,medium,low',
         'course_id' => 'required|exists:courses,id',
         'notified_teacher_id' => 'required|exists:users,id',
+        'display_line' => 'nullable|string|max:120',
     ]);
 
 $course = \App\Models\Course::find($data['course_id']);
@@ -213,6 +214,7 @@ $course = \App\Models\Course::find($data['course_id']);
         'section'  => $user->section,
         'course_id' => $data['course_id'],
         'notified_teacher_id' => $data['notified_teacher_id'],
+        'display_line' => $data['display_line'],
     ]);
 
     $teacher = \App\Models\User::find($notice->notified_teacher_id);
