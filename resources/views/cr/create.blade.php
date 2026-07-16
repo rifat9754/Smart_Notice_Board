@@ -13,10 +13,21 @@
 <label>Title</label>
 <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
 </div>
+
 <div class="form-group">
 <label>Message</label>
 <textarea name="body" class="form-control" rows="4" required>{{ old('body') }}</textarea>
 </div>
+
+<div class="form-group">
+<label>Display Board Line <small class="text-muted">(optional, one line)</small></label>
+<input type="text" name="display_line" class="form-control @error('display_line') is-invalid @enderror"
+       value="{{ old('display_line') }}" maxlength="120"
+       placeholder="Short one-line version for the display board">
+@error('display_line')<span class="invalid-feedback">{{ $message }}</span>@enderror
+</div>
+
+
 <div class="form-group">
 <label>Priority</label>
 <select name="priority" class="form-control" required>

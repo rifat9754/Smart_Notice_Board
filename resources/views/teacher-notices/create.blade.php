@@ -32,13 +32,21 @@
                           placeholder="Write the notice for the teachers…">{{ old('body') }}</textarea>
             </div>
 
-            <div class="form-group">
+<div class="form-group">
                 <label>Priority</label>
                 <select name="priority" class="form-control" required>
                     <option value="high"   {{ old('priority')=='high'?'selected':'' }}>High</option>
                     <option value="medium" {{ old('priority','medium')=='medium'?'selected':'' }}>Medium</option>
                     <option value="low"    {{ old('priority')=='low'?'selected':'' }}>Low</option>
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label>Display Board Summary <small class="text-muted">(optional, one line)</small></label>
+                <input type="text" name="display_line" class="form-control @error('display_line') is-invalid @enderror"
+                       value="{{ old('display_line') }}" maxlength="120"
+                       placeholder="Short one-line summary for the display board">
+                @error('display_line')<span class="invalid-feedback">{{ $message }}</span>@enderror
             </div>
 
             <button class="btn btn-primary">

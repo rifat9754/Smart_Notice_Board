@@ -27,22 +27,23 @@ class TeacherNoticeController extends Controller
         return view('teacher-notices.create');
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $data = $request->validate([
-            'title'    => 'required|string|max:255',
-            'body'     => 'required|string',
-            'priority' => 'required|in:high,medium,low',
+            'title'        => 'required|string|max:255',
+            'body'         => 'required|string',
+            'priority'     => 'required|in:high,medium,low',
+            'display_line' => 'nullable|string|max:120',
         ]);
-
         $notice = Notice::create([
             'title'     => $data['title'],
             'body'      => $data['body'],
             'priority'  => $data['priority'],
             'type'      => 'text',
             'status'    => 'published',
-            'audience'  => 'teachers',          // ← এটাই মূল
+            'audience'  => 'teachers',          // ←এটাই মূল
             'author_id' => Auth::id(),
+            'display_line' => $data['display_line'] ?? null,
         ]);
 
         AuditLog::create([
@@ -90,13 +91,12 @@ class TeacherNoticeController extends Controller
 public function update(Request $request, Notice $notice)
 {
     abort_unless($notice->audience === 'teachers', 403);
-
     $data = $request->validate([
-        'title'    => 'required|string|max:255',
-        'body'     => 'required|string',
-        'priority' => 'required|in:high,medium,low',
+        'title'        => 'required|string|max:255',
+        'body'         => 'required|string',
+        'priority'     => 'required|in:high,medium,low',
+        'display_line' => 'nullable|string|max:120',
     ]);
-
     $notice->update($data);
 
     AuditLog::create([

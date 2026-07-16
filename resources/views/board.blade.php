@@ -476,13 +476,12 @@ function renderClassUpdates() {
     const start = (cuPage % totalPages) * perPage;
     const pageItems = cuAll.slice(start, start + perPage);
 
-    list.innerHTML = pageItems.map(u => `
-        <div class="cu-item">
-            ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
-            <span class="cu-title">${u.title}</span>
-            <span class="cu-body">${u.body.length > 55 ? u.body.slice(0,55) + '…' : u.body}</span>
-        </div>
-    `).join('');
+list.innerHTML = pageItems.map(u => `
+    <div class="cu-item">
+        ${u.year && u.section ? `<span class="cu-class">${u.year}-${u.section}</span>` : ''}
+        <span class="cu-title">${u.display}</span>
+    </div>
+`).join('');
 }
 
 function rotateClassUpdates() {
@@ -527,19 +526,18 @@ function renderTeacherNotices() {
     const start = (tnPage % totalPages) * perPage;
     const pageItems = tnAll.slice(start, start + perPage);
 
-    list.innerHTML = pageItems.map(n => `
-        <div class="tn-item">
-            <span class="tn-title">${n.title}</span>
-            <span class="tn-body">${n.body.length > 55 ? n.body.slice(0,55) + '…' : n.body}</span>
-        </div>
-    `).join('');
+list.innerHTML = pageItems.map(n => `
+    <div class="tn-item">
+        <span class="tn-title">${n.display}</span>
+    </div>
+`).join('');
 }
 
 function rotateTeacherNotices() {
     if (tnAll.length > 2) { tnPage++; renderTeacherNotices(); }
 }
 
-// দুটোর একটাও না থাকলে পুরো bottom bar লুকাও
+
 function updateBottomPanels() {
     const cu = document.getElementById('classUpdates');
     const tn = document.getElementById('teacherNotices');

@@ -44,6 +44,7 @@ $data = $request->validate([
 'priority'            => 'required|in:high,medium,low',
 'course_id'           => 'required|exists:courses,id',
 'notified_teacher_id' => 'required|exists:users,id',
+'display_line'        => 'nullable|string|max:120',
     ]);
 
 $course = \App\Models\Course::find($data['course_id']);
@@ -71,6 +72,7 @@ $notice = Notice::create([
 'notified_seen'       => false,
 'year'    => $user->year,
 'section' => $user->section,
+'display_line' => $data['display_line'] ?? null,
     ]);
 
 AuditLog::create([

@@ -161,6 +161,7 @@ public function teacherNotices()
             'id'       => $n->id,
             'title'    => $n->title,
             'body'     => $n->body,
+            'display'  => $n->display_line ?: $n->title,
             'priority' => $n->priority,
         ]);
 

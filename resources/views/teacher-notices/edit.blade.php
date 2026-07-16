@@ -25,15 +25,26 @@
                 <textarea name="body" class="form-control" rows="4" required>{{ old('body', $notice->body) }}</textarea>
             </div>
 
-            <div class="form-group">
+<div class="form-group">
                 <label>Priority</label>
                 <select name="priority" class="form-control" required>
-                    @foreach(['high','medium','low'] as $p)
-                        <option value="{{ $p }}" {{ old('priority', $notice->priority) == $p ? 'selected' : '' }}>
+                    @foreach(['high','medium','low']as $p)
+                        <option value="{{ $p }}" {{ old('priority', $notice->priority) == $p ? 'selected': '' }}>
                             {{ ucfirst($p) }}
                         </option>
                     @endforeach
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label>Display Board Summary <small class="text-muted">(optional, one line)</small></label>
+                <input type="text" name="display_line" class="form-control @error('display_line') is-invalid @enderror"
+                       value="{{ old('display_line', $notice->display_line) }}" maxlength="120"
+                       placeholder="Short one-line summary for the display board">
+                <small class="text-muted">
+                    Shown on the "Notice for Teachers" panel of the display board. If empty, the title is shown.
+                </small>
+                @error('display_line')<span class="invalid-feedback">{{ $message }}</span>@enderror
             </div>
 
             <button class="btn btn-primary"><i class="fas fa-save"></i> Update Notice</button>

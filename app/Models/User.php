@@ -25,6 +25,7 @@ public function notifiedNotices()
 {
     return $this->hasMany(\App\Models\Notice::class, 'notified_teacher_id');
 }
+
 public function courses()
 {
 return $this->belongsToMany(\App\Models\Course::class, 'course_teacher', 'user_id', 'course_id');
