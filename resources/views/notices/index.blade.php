@@ -64,10 +64,10 @@
                 </table>
             </div>
 
-            {{-- Notices from CR --}}
+{{-- Notices from CR --}}
             <div class="tab-pane fade" id="fromcr">
                 <table class="table table-hover">
-                    <thead><tr><th>Title</th><th>Class</th><th>Course</th><th>CR</th><th>Reply</th><th>Date</th></tr></thead>
+                    <thead><tr><th>Title</th><th>Class</th><th>Course</th><th>CR</th><th>Reply</th><th>Date</th><th>Actions</th></tr></thead>
                     <tbody>
                     @forelse($fromCr as $n)
                         <tr>
@@ -87,9 +87,20 @@
                                 @endif
                             </td>
                             <td>{{ $n->created_at->format('d M Y') }}</td>
+                            <td>
+                                @can('is-admin')
+                                    <form action="{{ route('notices.destroy', $n) }}" method="POST"
+                                          onsubmit="return confirm('Delete this CR notice?')">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                                    </form>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endcan
+                            </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">No CR notices.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4">No CR notices.</td></tr>
                     @endforelse
                     </tbody>
                 </table>
