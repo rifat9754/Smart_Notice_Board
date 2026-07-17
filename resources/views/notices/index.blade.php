@@ -107,15 +107,19 @@
                             <td><span class="badge badge-{{ $n->priority=='high'?'danger':($n->priority=='medium'?'warning':'info') }}">{{ strtoupper($n->priority) }}</span></td>
                             <td>{{ $n->author->name ?? 'Admin' }}</td>
                             <td>{{ $n->created_at->format('d M Y') }}</td>
-                            <td>
-                                <a href="{{ route('teacher-notices.edit', $n) }}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <form action="{{ route('teacher-notices.destroy', $n) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Delete this notice?')">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                </form>
+                          <td>
+                                @can('is-admin')
+                                    <a href="{{ route('teacher-notices.edit', $n) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('teacher-notices.destroy', $n) }}" method="POST" class="d-inline"
+                                          onsubmit="return confirm('Delete this notice?')">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                                    </form>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endcan
                             </td>
                         </tr>
                     @empty

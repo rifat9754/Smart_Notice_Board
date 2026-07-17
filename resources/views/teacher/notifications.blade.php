@@ -93,7 +93,7 @@
             </small>
 
             {{-- শুধু admin edit/delete দেখবে --}}
-            @can('is-admin')
+           <!-- @can('is-admin')
                 <div class="mt-3">
                     <a href="{{ route('teacher-notices.edit', $n) }}" class="btn btn-sm btn-warning">
                         <i class="fas fa-edit"></i> Edit
@@ -104,7 +104,7 @@
                         <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
                     </form>
                 </div>
-            @endcan
+            @endcan.  -->
         </div>
     </div>
 @empty

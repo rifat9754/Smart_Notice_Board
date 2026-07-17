@@ -28,7 +28,7 @@
 <div class="form-group">
                 <label>Priority</label>
                 <select name="priority" class="form-control" required>
-                    @foreach(['high','medium','low']as $p)
+                    @foreach(['high','medium','low'] as $p)
                         <option value="{{ $p }}" {{ old('priority', $notice->priority) == $p ? 'selected': '' }}>
                             {{ ucfirst($p) }}
                         </option>
