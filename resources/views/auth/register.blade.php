@@ -284,48 +284,7 @@ body,
             </div>
         </div>
 
-        <div class="input-group mb-3" id="yearField">
-    <select name="year" class="form-control @error('year') is-invalid @enderror">
-        <option value="">Select Year</option>
-        <option value="1st" {{ old('year')=='1st'?'selected':'' }}>1st Year</option>
-        <option value="2nd" {{ old('year')=='2nd'?'selected':'' }}>2nd Year</option>
-        <option value="3rd" {{ old('year')=='3rd'?'selected':'' }}>3rd Year</option>
-        <option value="4th" {{ old('year')=='4th'?'selected':'' }}>4th Year</option>
-    </select>
-    <div class="input-group-append">
-        <div class="input-group-text"><i class="fas fa-graduation-cap"></i></div>
-    </div>
-    @error('year')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
-</div>
-
-<div class="input-group mb-3" id="sectionField">
-    <select name="section" class="form-control @error('section') is-invalid @enderror">
-        <option value="">Select Section</option>
-        <option value="A" {{ old('section')=='A'?'selected':'' }}>Section A</option>
-        <option value="B" {{ old('section')=='B'?'selected':'' }}>Section B</option>
-    </select>
-    <div class="input-group-append">
-        <div class="input-group-text"><i class="fas fa-users"></i></div>
-    </div>
-    @error('section')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
-</div>
-
-<script>
-// শুধু student বাছলে year/section দেখাও
-document.addEventListener('DOMContentLoaded', function() {
-    const roleSelect = document.querySelector('select[name="role"]');
-    const yearField = document.getElementById('yearField');
-    const sectionField = document.getElementById('sectionField');
-
-    function toggleFields() {
-        const show = roleSelect.value === 'student';
-        yearField.style.display = show ? 'flex' : 'none';
-        sectionField.style.display = show ? 'flex' : 'none';
-    }
-    roleSelect.addEventListener('change', toggleFields);
-    toggleFields();
-});
-</script>
+        
 
         <div class="col-md-6">
             <div class="form-group">
