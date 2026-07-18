@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "686431318947",
+    "firebase_url": "https://ahanaff-81c7b-default-rtdb.firebaseio.com",
+    "project_id": "ahanaff-81c7b",
+    "storage_bucket": "ahanaff-81c7b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686431318947:android:d2cb3829f0d6ecc1c3a016",
+        "android_client_info": {
+          "package_name": "com.example.notice_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuT1mZvvduPMWNvmPxSgJUproz1bcvwWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
