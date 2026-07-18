@@ -86,6 +86,6 @@
         </div>
     </div>
 
-    <footer>KUET CSE Digital Notice Board &middot; 2026</footer>
+@include('partials.footer')
 </body>
 </html>

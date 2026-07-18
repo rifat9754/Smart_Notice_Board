@@ -56,5 +56,6 @@
 
         <a href="{{ route('login') }}">Back to login</a>
     </div>
+@include('partials.footer')
 </body>
 </html>

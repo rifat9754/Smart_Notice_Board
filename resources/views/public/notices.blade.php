@@ -87,5 +87,6 @@ document.getElementById(id).classList.add('active');
 btn.classList.add('active');
 }
 </script>
+@include('partials.footer')
 </body>
 </html>
