@@ -8,6 +8,7 @@ use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use App\Services\FcmService;
 use Illuminate\Support\Facades\Auth;
+use Cloudinary\Cloudinary;
 
 use App\Services\AiSummaryService;
 use Smalot\PdfParser\Parser;
@@ -53,9 +54,21 @@ public function index()
         $data['is_emergency'] = $request->has('is_emergency');
         $data['author_id'] = Auth::id();
 
-        if ($request->hasFile('attachment')) {
-            $data['file_path'] = $request->file('attachment')->store('notices', 'public');
-        }
+if ($request->hasFile('attachment')) {
+
+    $cloud = new Cloudinary(env('CLOUDINARY_URL'));
+
+$result = $cloud->uploadApi()->upload(
+    $request->file('attachment')->getRealPath(),
+    [
+        'upload_preset' => 'public_assets',
+        'folder' => 'notices',
+        'resource_type' => 'raw',
+    ]
+);
+
+    $data['file_path'] = $result['secure_url'];
+}
         unset($data['attachment']);
 
 
@@ -100,12 +113,32 @@ public function index()
         $data = $this->validateNotice($request);
         $data['is_emergency'] = $request->has('is_emergency');
 
-        if ($request->hasFile('attachment')) {
-            $data['file_path'] = $request->file('attachment')->store('notices', 'public');
-        }
+if ($request->hasFile('attachment')) {
+
+    $cloud = new Cloudinary(env('CLOUDINARY_URL'));
+
+$result = $cloud->uploadApi()->upload(
+    $request->file('attachment')->getRealPath(),
+    [
+        'folder' => 'notices',
+        'resource_type' => 'raw',
+        'use_filename' => true,
+        'unique_filename' => true,
+    ]
+);
+
+
+
+    $data['file_path'] = $result['secure_url'];
+}
         unset($data['attachment']);
 
         $notice->update($data);
+
+        if ($notice->type === 'pdf' && $notice->file_path) {
+    $this->generateSummary($notice);
+}
+
 
                 AuditLog::create(['user_id' => auth()->id(), 'action' => 'updated', 'target_type' => 'Notice', 'target_id' => $notice->id]);
 
@@ -157,18 +190,56 @@ public function destroy(Notice $notice)
         ]);
     }
 
-    private function generateSummary(Notice $notice): void
+   public function viewAttachment(Notice $notice)
+{
+    abort_unless($notice->file_path, 404);
+
+    return view('notices.viewer', [
+        'pdfUrl' => $notice->file_path,
+    ]);
+} 
+
+private function generateSummary(Notice $notice): void
 {
     try {
-        $path = storage_path('app/public/' . $notice->file_path);
-        $text = (new Parser())->parseFile($path)->getText();
+
+        if (str_starts_with($notice->file_path, 'http')) {
+
+            $tmpPath = tempnam(sys_get_temp_dir(), 'pdf_') . '.pdf';
+
+            file_put_contents(
+                $tmpPath,
+                file_get_contents($notice->file_path)
+            );
+
+            $text = (new \Smalot\PdfParser\Parser())
+                ->parseFile($tmpPath)
+                ->getText();
+
+            @unlink($tmpPath);
+
+        } else {
+
+            $path = storage_path('app/public/' . $notice->file_path);
+
+            $text = (new \Smalot\PdfParser\Parser())
+                ->parseFile($path)
+                ->getText();
+        }
 
         $summary = app(AiSummaryService::class)->summarize($text);
+
         if ($summary) {
-            $notice->update(['ai_summary' => $summary]);
+            $notice->update([
+                'ai_summary' => $summary,
+            ]);
         }
+
     } catch (\Throwable $e) {
-        // PDF পড়া না গেলে চুপচাপ skip
+        \Log::error('AI summary failed: ' . $e->getMessage(), [
+            'notice_id' => $notice->id,
+            'file_path' => $notice->file_path,
+        ]);
     }
 }
 }

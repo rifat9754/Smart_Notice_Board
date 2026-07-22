@@ -35,15 +35,17 @@
             <div class="ai"><b>✨ AI Summary</b><br>{{ $notice->ai_summary }}</div>
         @endif
 
-        @if($notice->file_path)
-            @if($notice->type === 'pdf')
-                <a href="{{ asset('storage/'.$notice->file_path) }}" target="_blank" class="pdf-btn">
-                    📎 View / Download PDF
-                </a>
-            @elseif($notice->type === 'image')
-                <img src="{{ asset('storage/'.$notice->file_path) }}" class="img-att" alt="attachment">
-            @endif
-        @endif
+@if($notice->file_path)
+    @if($notice->type === 'pdf')
+        <a href="{{ route('notices.attachment', $notice->id) }}"
+           target="_blank"
+           class="pdf-btn">
+            📄 View PDF
+        </a>
+    @elseif($notice->type === 'image')
+        <img src="{{ $notice->file_path }}" class="img-att" alt="attachment">
+    @endif
+@endif
     </div>
 @include('partials.footer')
 </body>

@@ -18,11 +18,15 @@
                 </div>
             @endif
 
-            @if($notice->file_path)
-                <a href="{{ asset('storage/' . $notice->file_path) }}" target="_blank" class="btn btn-secondary mt-2">
-                    📎 View Attachment
-                </a>
-            @endif
+@if($notice->file_path)
+    @if($notice->type === 'pdf')
+        <a href="{{ route('notices.attachment', $notice) }}" target="_blank" class="btn btn-secondary mt-2">
+            📄 View PDF
+        </a>
+    @elseif($notice->type === 'image')
+        <img src="{{ $notice->file_path }}" class="img-fluid mt-2 rounded" alt="attachment">
+    @endif
+@endif
         </div>
     </div>
     <a href="{{ route('student.feed') }}" class="btn btn-light">← Back to notices</a>

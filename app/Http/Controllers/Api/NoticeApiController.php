@@ -60,7 +60,7 @@ private function format($n)
             'body'       => $n->body,
             'type'       => $n->type,
             'priority'   => $n->priority,
-            'file_url'   => $n->file_path ? asset('storage/' . $n->file_path) : null,
+            'file_url' => $n->file_path ?: null,
             'ai_summary' => $n->ai_summary,
             'year'       => $n->year,
             'section'    => $n->section,

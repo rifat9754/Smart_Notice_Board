@@ -23,7 +23,7 @@
         @forelse($events as $e)
             <div class="col-md-4">
                 <div class="card">
-                    <img src="{{ asset('storage/'.$e->image_path) }}" class="card-img-top" style="height:180px;object-fit:cover;">
+                   <img src="{{ $e->image_path }}" class="card-img-top" style="height:180px;object-fit:cover;">
                     <div class="card-body">
                         <p class="mb-2"><b>{{ $e->title ?? 'Untitled' }}</b></p>
                         <form action="{{ route('events.destroy', $e) }}" method="POST" onsubmit="return confirm('Delete this event image?')">

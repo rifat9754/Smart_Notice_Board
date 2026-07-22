@@ -23,6 +23,8 @@ class DisplayController extends Controller
             ->withCount('views')
             ->get();
 
+
+
         // 2) Daily time-window filter (time_start / time_end)
         $notices = $notices->filter(function ($n) use ($now) {
             if ($n->time_start && $n->time_end) {
@@ -104,7 +106,7 @@ class DisplayController extends Controller
             'body'         => $n->body,
             'type'         => $n->type,
             'priority'     => $n->priority,
-            'file_url'     => $n->file_path ? asset('storage/' . $n->file_path) : null,
+            'file_url' => $n->file_path,
             'ai_summary'   => $n->ai_summary,
             'is_emergency' => (bool) $n->is_emergency,
         ];
@@ -114,7 +116,7 @@ class DisplayController extends Controller
 {
     $events = \App\Models\Event::latest()->take(10)->get()->map(fn($e) => [
         'title' => $e->title,
-        'image' => asset('storage/'.$e->image_path),
+        'image' => $e->image_path,
     ]);
     return response()->json(['events' => $events]);
 }
