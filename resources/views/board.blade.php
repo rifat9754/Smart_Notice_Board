@@ -174,17 +174,26 @@
             min-width: 260px;
             display: flex;
             min-height: 0;
+            height: 100%;
         }
-        .event-box {
-            flex: 1;
-            background: var(--panel-solid);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            min-height: 0;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-        }
+.event-box {
+    flex: 1;
+    background: var(--panel-solid);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+    height: 100%;                   
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+.event-box img {
+    width: 100%;
+    height: 100%;                   
+    object-fit: cover; 
+    display: block;
+}
         .event-box .empty {
             height: 100%; display: flex; align-items: center; justify-content: center;
             color: #64748b; font-size: 15px;
@@ -438,7 +447,7 @@
             const ev = eventImages[eventIdx % eventImages.length];
             area.className = '';
             area.innerHTML = `
-                <img src="${ev.image}" alt="event" style="width:100%;height:100%;object-fit:cover;">
+                <img src="${ev.image}" alt="event" style="width:100%;height:100%;object-fit:cover;display:block;">
                 ${ev.title ? `<div class="event-caption">${ev.title}</div>` : ''}
             `;
         }
