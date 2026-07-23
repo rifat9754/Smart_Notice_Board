@@ -189,10 +189,13 @@
 }
 
 .event-box img {
-    width: 100%;
-    height: 100%;                   
-    object-fit: cover; 
-    display: block;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
 }
         .event-box .empty {
             height: 100%; display: flex; align-items: center; justify-content: center;
